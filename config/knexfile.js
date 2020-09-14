@@ -9,7 +9,7 @@ module.exports = {
       port: 5432,
       user: 'postgres',
       database: 'StorySquad',
-      password: 'J3$uspenguin'
+      password: 'J3$uspenguin',
     },
     migrations: { directory: '../data/migrations' },
     seeds: { directory: '../data/seeds' },

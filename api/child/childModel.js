@@ -41,35 +41,44 @@ const findOrCreateChild = async (childObj) => {
 };
 
 //I will make this return prettier data later
-const getChildSubmissions = async (id) =>{
-    drawingsArr =  await db('Drawing_Responses').where({child_id: id}).returning('file_path', 'mission_id')
-    storiesArr =  await db('Writing_Responses').where({child_id: id}).returning('file_path', 'mission_id')
-    archive = {
-        drawings: drawingsArr,
-        stories: storiesArr
-    }
-    return archive;
-}
+const getChildSubmissions = async (id) => {
+  const drawingsArr = await db('Drawing_Responses')
+    .where({ child_id: id })
+    .returning('file_path', 'mission_id');
+  const storiesArr = await db('Writing_Responses')
+    .where({ child_id: id })
+    .returning('file_path', 'mission_id');
+  const archive = {
+    drawings: drawingsArr,
+    stories: storiesArr,
+  };
+  return archive;
+};
 
-const getCurrentMission = async (current_mission) =>{
-    const reading = await db('Story').where({mission_id: current_mission}).returning('file_path')
-    const mission = await db('Missions').where({id: current_mission}).returning('id', 'title', 'writing_prompt', 'drawing_prompt').first()
-    const missionObj = {
-        mission_id: mission.id,
-        read: reading,
-        write: mission.writing_prompt,
-        draw: mission.drawing_prompt
-    }
-    return missionObj
-}
+const getCurrentMission = async (current_mission) => {
+  const reading = await db('Story')
+    .where({ mission_id: current_mission })
+    .returning('file_path');
+  const mission = await db('Missions')
+    .where({ id: current_mission })
+    .returning('id', 'title', 'writing_prompt', 'drawing_prompt')
+    .first();
+  const missionObj = {
+    mission_id: mission.id,
+    read: reading,
+    write: mission.writing_prompt,
+    draw: mission.drawing_prompt,
+  };
+  return missionObj;
+};
 
-const addDrawing = async (drawingObj) =>{
-    return db('Drawing_Responses').insert(drawingObj).returning('*')
-}
+const addDrawing = async (drawingObj) => {
+  return db('Drawing_Responses').insert(drawingObj).returning('*');
+};
 
-const addWriting = async (writingObj) =>{
-    return db('Drawing_Responses').insert(drawingObj).returning('*')
-}
+const addWriting = async (writingObj) => {
+  return db('Drawing_Responses').insert(writingObj).returning('*');
+};
 
 module.exports = {
   findAll,
@@ -83,5 +92,4 @@ module.exports = {
   getCurrentMission,
   addDrawing,
   addWriting,
-
 };

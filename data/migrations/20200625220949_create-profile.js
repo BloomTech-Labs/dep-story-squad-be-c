@@ -7,20 +7,20 @@ exports.up = (knex) => {
       table.string('email').notNullable().unique();
       table.string('pin').notNullable();
       table.boolean('admin').notNullable().defaultTo(0);
-      table.boolean('subscription').notNullable().defaultTo(0)
+      table.boolean('subscription').notNullable().defaultTo(0);
       table.timestamps(true, true);
     })
-    .createTable('Missions', function (table){
+    .createTable('Missions', function (table) {
       table.increments('id');
       table.string('title').notNullable();
       table.string('writing_prompt').notNullable();
       table.string('drawing_prompt').notNullable();
     })
-    .createTable('Child', function (table){
+    .createTable('Child', function (table) {
       table.increments('id');
       table.string('name');
       table.integer('writing_score').notNullable().defaultTo(50);
-      table.string('avatar_url')
+      table.string('avatar_url');
       table.integer('pin').notNullable();
       table.string('username').unique().notNullable();
       table
@@ -39,7 +39,7 @@ exports.up = (knex) => {
         .onUpdate('CASCADE')
         .onDelete('CASCADE');
     })
-    .createTable('Story', function (table){
+    .createTable('Story', function (table) {
       table.increments('id');
       table.string('file_path').notNullable();
       table
@@ -49,9 +49,8 @@ exports.up = (knex) => {
         .references('Missions.id')
         .onUpdate('CASCADE')
         .onDelete('CASCADE');
-      
     })
-    .createTable('Writing_Responses', function (table){
+    .createTable('Writing_Responses', function (table) {
       table.increments('id');
       table.string('file_path').notNullable();
       table.integer('score').notNullable();
@@ -71,7 +70,7 @@ exports.up = (knex) => {
         .onUpdate('CASCADE')
         .onDelete('CASCADE');
     })
-    .createTable('Drawing_Responses', function (table){
+    .createTable('Drawing_Responses', function (table) {
       table.increments('id');
       table.string('file_path').notNullable();
       table.boolean('flagged').notNullable().defaultTo(0);
@@ -89,9 +88,7 @@ exports.up = (knex) => {
         .references('Missions.id')
         .onUpdate('CASCADE')
         .onDelete('CASCADE');
-    })
-
-    
+    });
 };
 
 exports.down = (knex) => {
@@ -101,5 +98,5 @@ exports.down = (knex) => {
     .dropTableIfExists('Child')
     .dropTableIfExists('Story')
     .dropTableIfExists('Missions')
-    .dropTableIfExists('Parent')
+    .dropTableIfExists('Parent');
 };

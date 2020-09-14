@@ -24,7 +24,7 @@ const authRequired = async (req, res, next) => {
     if (!match) throw new Error('Missing idToken');
 
     const idToken = match[1];
-    console.log(idToken)
+    console.log(idToken);
     oktaJwtVerifier
       .verifyAccessToken(idToken, oktaVerifierConfig.expectedAudience)
       .then(async (data) => {
@@ -34,9 +34,9 @@ const authRequired = async (req, res, next) => {
         //res.status(200).json({'message': jwtUserObj});
         if (profile) {
           req.profile = profile;
-        } else if(jwtUserObj.id && jwtUserObj.name && jwtUserObj.email){
-          req.newProfile = jwtUserObj
-        } else{
+        } else if (jwtUserObj.id && jwtUserObj.name && jwtUserObj.email) {
+          req.newProfile = jwtUserObj;
+        } else {
           throw new Error('unable to process id token');
         }
         next();

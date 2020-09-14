@@ -1,6 +1,5 @@
 var express = require('express');
 var router = express.Router();
-var authRequired = require('../middleware/authRequired')
 /**
  * @swagger
  * /:
@@ -27,7 +26,5 @@ var authRequired = require('../middleware/authRequired')
 router.get('/', function (req, res) {
   res.status(200).json({ api: 'up', timestamp: Date.now() });
 });
-
-
 
 module.exports = router;

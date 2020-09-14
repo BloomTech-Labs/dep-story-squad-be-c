@@ -18,11 +18,7 @@ const create = async (parentObj) => {
 
 const update = (id, changes) => {
   console.log(changes);
-  return db('Parent')
-    .where({ id: id })
-    .first()
-    .update(changes)
-    .returning('*');
+  return db('Parent').where({ id: id }).first().update(changes).returning('*');
 };
 
 const remove = async (id) => {
@@ -40,17 +36,21 @@ const findOrCreateParent = async (parentObj) => {
   }
 };
 
-const createChild = async(childObj)=>{
-  return await db('Child').insert(childObj).returning('id', 'name', 'avatar_url');
-}
+const createChild = async (childObj) => {
+  return await db('Child')
+    .insert(childObj)
+    .returning('id', 'name', 'avatar_url');
+};
 
-const getChildNamesAndIDS = async (id) =>{
-    return await db('Child').where({parent_id: id}).select('id', 'name', 'pin');
-}
+const getChildNamesAndIDS = async (id) => {
+  return await db('Child').where({ parent_id: id }).select('id', 'name', 'pin');
+};
 
-const getChildData = async (id) =>{
-    return await db('Child').where({parent_id: id}).select('id', 'name', 'writing_score', 'current_mission');
-}
+const getChildData = async (id) => {
+  return await db('Child')
+    .where({ parent_id: id })
+    .select('id', 'name', 'writing_score', 'current_mission');
+};
 
 module.exports = {
   findAll,
@@ -62,5 +62,5 @@ module.exports = {
   findOrCreateParent,
   createChild,
   getChildNamesAndIDS,
-  getChildData
+  getChildData,
 };

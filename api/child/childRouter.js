@@ -1,7 +1,7 @@
-const express = require('express');
-const authRequired = require('../middleware/authRequired');
-const Child = require('./childModel');
-const router = express.Router();
+//const express = require('express');
+//const authRequired = require('../middleware/authRequired');
+//const Child = require('./childModel');
+//const router = express.Router();
 
 //login endpoint for child
 
@@ -11,5 +11,4 @@ const router = express.Router();
 
 //post story and drawing submission
 
-
-module.exports = router;
+//module.exports = router;

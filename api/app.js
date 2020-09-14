@@ -4,9 +4,9 @@ const cors = require('cors');
 const cookieParser = require('cookie-parser');
 const logger = require('morgan');
 const helmet = require('helmet');
-const swaggerUi = require('swagger-ui-express');
-const swaggerJSDoc = require('swagger-jsdoc');
-const jsdocConfig = require('../config/jsdoc');
+//const swaggerUi = require('swagger-ui-express');
+//const swaggerJSDoc = require('swagger-jsdoc');
+//const jsdocConfig = require('../config/jsdoc');
 const dotenv = require('dotenv');
 const config_result = dotenv.config();
 if (process.env.NODE_ENV != 'production' && config_result.error) {
@@ -21,8 +21,8 @@ const swaggerUIOptions = {
 //###[  Routers ]###
 const indexRouter = require('./index/indexRouter');
 const parentRouter = require('./parent/parentRouter');
-const childRouter = require('./child/childRouter')
-const multerRouter = require('./multerTest/multerRouter');
+//const childRouter = require('./child/childRouter');
+//const multerRouter = require('./multerTest/multerRouter');
 
 const app = express();
 
@@ -50,10 +50,8 @@ app.use(cookieParser());
 
 // application routes
 app.use('/', indexRouter);
-//app.use('/auth')
 app.use('/parent', parentRouter);
 //app.use('/multer', multerRouter)
-
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
