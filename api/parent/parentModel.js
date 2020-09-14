@@ -40,6 +40,10 @@ const findOrCreateParent = async (parentObj) => {
   }
 };
 
+const createChild = async(childObj)=>{
+  return await db('Child').insert(childObj).returning('id', 'name', 'avatar_url');
+}
+
 const getChildNamesAndIDS = async (id) =>{
     return await db('Child').where({parent_id: id}).select('id', 'name', 'pin');
 }
@@ -56,6 +60,7 @@ module.exports = {
   update,
   remove,
   findOrCreateParent,
+  createChild,
   getChildNamesAndIDS,
   getChildData
 };

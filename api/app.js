@@ -51,8 +51,8 @@ app.use(cookieParser());
 // application routes
 app.use('/', indexRouter);
 //app.use('/auth')
-//app.use('/parent', parentRouter);
-app.use('/multer', multerRouter)
+app.use('/parent', parentRouter);
+//app.use('/multer', multerRouter)
 
 
 // catch 404 and forward to error handler
