@@ -4,7 +4,7 @@ const oktaVerifierConfig = require('../../config/okta');
 const Profiles = require('../profile/profileModel');
 const oktaJwtVerifier = new OktaJwtVerifier(oktaVerifierConfig.config);
 
-const makeProfileObj = (claims) => {
+const makeParentObj = (claims) => {
   return {
     id: claims.sub,
     email: claims.email,

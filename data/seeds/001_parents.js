@@ -1,0 +1,14 @@
+const faker = require('faker');
+exports.seed = function(knex) {
+  // Deletes ALL existing entries
+  return knex('Parent').del()
+    .then(function () {
+      // Inserts seed entries
+      return knex('Parent').insert([
+        {name: faker.name.firstName(), email: 'llama001@maildrop.cc', pin: 1234, subscription: 1, admin: false},
+        {name: faker.name.firstName(), email: 'llama002@maildrop.cc', pin: 1234, subscription: 1, admin: false},
+        {name: faker.name.firstName(), email: 'llama003@maildrop.cc', pin: 1234, subscription: 1, admin: false},
+        {name: faker.name.firstName(), email: 'llama004@maildrop.cc', pin: 1234, subscription: 1, admin: true}
+      ]);
+    });
+};
