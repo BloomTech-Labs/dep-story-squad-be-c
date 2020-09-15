@@ -1,15 +1,102 @@
 exports.up = (knex) => {
   return knex.schema
     .raw('CREATE EXTENSION IF NOT EXISTS "uuid-ossp"')
-    .createTable('profiles', function (table) {
-      table.string('id').notNullable().unique().primary();
-      table.string('email');
-      table.string('name');
-      table.string('avatarUrl');
+    .createTable('Parent', function (table) {
+      table.string('id').primary().unique().notNullable();
+      table.string('name').notNullable().unique();
+      table.string('email').notNullable().unique();
+      table.string('pin').notNullable();
+      table.boolean('admin').notNullable().defaultTo(0);
+      table.boolean('subscription').notNullable().defaultTo(0);
       table.timestamps(true, true);
+    })
+    .createTable('Missions', function (table) {
+      table.increments('id');
+      table.string('title').notNullable();
+      table.string('writing_prompt').notNullable();
+      table.string('drawing_prompt').notNullable();
+    })
+    .createTable('Child', function (table) {
+      table.increments('id');
+      table.string('name');
+      table.integer('writing_score').notNullable().defaultTo(50);
+      table.string('avatar_url');
+      table.integer('pin').notNullable();
+      table.string('username').unique().notNullable();
+      table
+        .string('parent_id')
+        .notNullable()
+        .unsigned()
+        .references('Parent.id')
+        .onUpdate('CASCADE')
+        .onDelete('CASCADE');
+      table
+        .integer('current_mission')
+        .notNullable()
+        .defaultTo(1)
+        .unsigned()
+        .references('Missions.id')
+        .onUpdate('CASCADE')
+        .onDelete('CASCADE');
+    })
+    .createTable('Story', function (table) {
+      table.increments('id');
+      table.string('file_path').notNullable();
+      table
+        .integer('mission_id')
+        .notNullable()
+        .unsigned()
+        .references('Missions.id')
+        .onUpdate('CASCADE')
+        .onDelete('CASCADE');
+    })
+    .createTable('Writing_Responses', function (table) {
+      table.increments('id');
+      table.string('file_path').notNullable();
+      table.integer('score').notNullable();
+      table.boolean('flagged').notNullable().defaultTo(0);
+      table
+        .integer('child_id')
+        .notNullable()
+        .unsigned()
+        .references('Child.id')
+        .onUpdate('CASCADE')
+        .onDelete('CASCADE');
+      table
+        .integer('mission_id')
+        .notNullable()
+        .unsigned()
+        .references('Missions.id')
+        .onUpdate('CASCADE')
+        .onDelete('CASCADE');
+    })
+    .createTable('Drawing_Responses', function (table) {
+      table.increments('id');
+      table.string('file_path').notNullable();
+      table.boolean('flagged').notNullable().defaultTo(0);
+      table
+        .integer('child_id')
+        .notNullable()
+        .unsigned()
+        .references('Child.id')
+        .onUpdate('CASCADE')
+        .onDelete('CASCADE');
+      table
+        .integer('mission_id')
+        .notNullable()
+        .unsigned()
+        .references('Missions.id')
+        .onUpdate('CASCADE')
+        .onDelete('CASCADE');
     });
 };
 
 exports.down = (knex) => {
-  return knex.schema.dropTableIfExists('profiles');
+  return knex.schema
+    .dropTableIfExists('Drawing_Responses')
+    .dropTableIfExists('Writing_Responses')
+    .dropTableIfExists('Child')
+    .dropTableIfExists('Story')
+    .dropTableIfExists('Missions')
+    .dropTableIfExists('Parent');
 };
