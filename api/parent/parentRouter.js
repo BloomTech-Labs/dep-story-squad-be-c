@@ -13,11 +13,14 @@ router.post('/register', authRequired, function (req, res) {
       };
       Parents.create(parentObject)
         .then((newParent) => {
-          res.status(200).json({
-            id: newParent.id,
-            name: newParent.name,
+          console.log(newParent[0]);
+          if(newParent[0]){
+            res.status(200).json({
+            id: newParent[0].id,
+            name: newParent[0].name,
             message: 'successfully registered',
-          });
+          });}
+          
         })
         .catch((err) => {
           res.status(500).json({
@@ -87,7 +90,7 @@ router.get('/login', authRequired, function (req, res) {
         if (children) {
           const namesandIDS = {
             parent: {
-              id: req.profile.name,
+              id: req.profile.id,
               name: req.profile.name,
             },
             children: children,

@@ -21,7 +21,7 @@ exports.up = (knex) => {
       table.string('name');
       table.integer('writing_score').notNullable().defaultTo(50);
       table.string('avatar_url');
-      table.integer('pin').notNullable();
+      table.string('pin').notNullable();
       table.string('username').unique().notNullable();
       table
         .string('parent_id')
