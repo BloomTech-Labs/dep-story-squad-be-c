@@ -22,7 +22,7 @@ const swaggerUIOptions = {
 const indexRouter = require('./index/indexRouter');
 const parentRouter = require('./parent/parentRouter');
 //const childRouter = require('./child/childRouter');
-//const multerRouter = require('./multerTest/multerRouter');
+const multerRouter = require('./multerTest/multerRouter');
 
 const app = express();
 
@@ -51,7 +51,7 @@ app.use(cookieParser());
 // application routes
 app.use('/', indexRouter);
 app.use('/parent', parentRouter);
-//app.use('/multer', multerRouter)
+app.use('/multer', multerRouter)
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
