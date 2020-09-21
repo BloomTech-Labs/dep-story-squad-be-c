@@ -4,13 +4,13 @@
 //const router = express.Router();
 
 //login endpoint for child
-//takes a pin and verifies it
-//sends back a token and child data
+//check the pin
+//make a token
+//return child data and token
 
-//put for child data
-
-
-//get current mission
+//get current mission endpoint
+//check the token
+//
 
 //post story and drawing submission
 

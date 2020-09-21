@@ -20,6 +20,7 @@ const swaggerUIOptions = {
 */
 //###[  Routers ]###
 const indexRouter = require('./index/indexRouter');
+const authRouter = require('./auth/authRouter')
 const parentRouter = require('./parent/parentRouter');
 //const childRouter = require('./child/childRouter');
 const multerRouter = require('./multerTest/multerRouter');
@@ -50,6 +51,7 @@ app.use(cookieParser());
 
 // application routes
 app.use('/', indexRouter);
+app.use('/auth', authRouter);
 app.use('/parent', parentRouter);
 app.use('/multer', multerRouter)
 

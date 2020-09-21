@@ -2,43 +2,19 @@ const express = require('express');
 const router = express.Router();
 const authRequired = require('../middleware/authRequired');
 const Parents = require('./parentModel');
+const jwt = require("jsonwebtoken");
 
-//register a new parent account
-router.post('/register', authRequired, function (req, res) {
-  if (req.newProfile) {
-    if (req.body.pin) {
-      const parentObject = {
-        ...req.newProfile,
-        pin: req.body.pin,
-      };
-      Parents.create(parentObject)
-        .then((newParent) => {
-          console.log(newParent[0]);
-          if(newParent[0]){
-            res.status(200).json({
-            id: newParent[0].id,
-            name: newParent[0].name,
-            message: 'successfully registered',
-          });}
-          
-        })
-        .catch((err) => {
-          res.status(500).json({
-            message: 'error saving parent account',
-            error: err,
-          });
-        });
-    } else {
-      res.status(400).json({
-        message: 'you must include a pin to register',
-      });
-    }
-  } else {
-    res.status(400).json({
-      message: 'an account with that id already exists',
-    });
-  }
-});
+function createToken(user) {
+    const payload = {
+        sub: user.id,
+        username: user.username
+    };
+    const secret = process.env.JWTSECRET || 'bananas'
+    const options = {
+      expiresIn: "3h",
+    };
+        return jwt.sign(payload, secret, options);
+}
 
 //make a child account
 router.post('/:id', authRequired, function (req, res) {
@@ -82,69 +58,56 @@ router.post('/:id', authRequired, function (req, res) {
     });
 });
 
-//login returns the names and ids of all child accounts and the parent account
-router.get('/login', authRequired, function (req, res) {
-  if (req.profile) {
-    Parents.getChildNamesAndIDS(req.profile.id)
-      .then((children) => {
-        if (children) {
-          const namesandIDS = {
-            parent: {
-              id: req.profile.id,
-              name: req.profile.name,
-            },
-            children: children,
-          };
-          res.status(200).json({
-            message: 'logged in',
-            data: namesandIDS,
-          });
-        } else {
-          res.status(400).json({
-            message: 'no child accounts found',
-          });
-        }
-      })
-      .catch((err) => {
-        res.status(500).json({
-          message: 'error retrieving child data',
-          error: err,
-        });
-      });
-  } else {
-    res.status(400).json({
-      message: 'you must register a parent account before logging in',
-    });
-  }
-});
-
-//get dashboard
+//this is the login for the parent account to get the dashboard data
+//takes a pin in the body and returns a jwt and the child data
 router.get('/:id', authRequired, function (req, res) {
-  if (req.profile) {
-    Parents.getChildData(req.params.id)
-      .then((childData) => {
-        if (childData) {
-          res.status(200).json({
-            message: 'dashboard retrieved',
-            data: childData,
-          });
-        } else {
-          res.status(500).json({
-            message: 'no child data found',
-          });
+  //make sure the pin is in the body
+  if(req.body.pin){
+    //retrieve the parent from the db
+    Parents.findById(req.params.id)
+      .then((parent)=>{
+        //check the pin
+        if(parent.pin === req.body.pin){
+          //if the pin is correct make a token and get the dashboard data
+          const token = createToken(parent);
+          Parents.getChildData(req.params.id)
+            .then((childData) => {
+              if (childData) {
+                res.status(200).json({
+                  "message": 'dashboard retrieved',
+                  "data": childData,
+                  "token": token
+                });
+              }else{
+                res.status(500).json({
+                  "message": 'no child data found',
+                });
+              }
+            })
+            .catch((err) => {
+              res.status(500).json({
+                "message": 'error retrieving child data',
+                "error": err
+              });
+            });
+        }else{
+          res.status(400).json({
+            "message": "incorrect pin"
+          })
         }
       })
-      .catch((err) => {
-        res.status(500).json({
-          message: 'error retrieving child data',
-          error: err,
-        });
+      .catch(err=>{
+          res.status(400).json({
+            "message": "there is no parent with that ID",
+            "error": err
+          });
       });
-  } else {
-    res.status(400).json({
-      message: 'no profile found with that id',
-    });
-  }
+    
+    }else{
+      res.status(400).json({
+        message: 'please include a pin',
+      });
+    }
 });
 
 module.exports = router;

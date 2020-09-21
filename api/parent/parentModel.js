@@ -43,7 +43,7 @@ const createChild = async (childObj) => {
 };
 
 const getChildNamesAndIDS = async (id) => {
-  return await db('Child').where({ parent_id: id }).select('id', 'name', 'pin');
+  return await db('Child').where({ parent_id: id }).select('id', 'name',);
 };
 
 const getChildData = async (id) => {
