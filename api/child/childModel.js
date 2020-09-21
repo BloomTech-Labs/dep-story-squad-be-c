@@ -62,14 +62,15 @@ const getChildSubmissions = async (id) => {
 const getCurrentMission = async (current_mission) => {
   const reading = await db('Story')
     .where({ mission_id: current_mission })
-    .returning('file_path');
+    .first()
+    .select('file_path');
   const mission = await db('Missions')
     .where({ id: current_mission })
     .returning('id', 'title', 'writing_prompt', 'drawing_prompt')
     .first();
   const missionObj = {
     mission_id: mission.id,
-    read: reading,
+    read: reading.file_path,
     write: mission.writing_prompt,
     draw: mission.drawing_prompt,
   };
