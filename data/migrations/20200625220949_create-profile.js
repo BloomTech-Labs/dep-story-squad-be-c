@@ -13,8 +13,8 @@ exports.up = (knex) => {
     .createTable('Missions', function (table) {
       table.increments('id');
       table.string('title').notNullable();
-      table.string('writing_prompt').notNullable();
-      table.string('drawing_prompt').notNullable();
+      table.string('writing_prompt', 1000).notNullable();
+      table.string('drawing_prompt', 1000).notNullable();
     })
     .createTable('Child', function (table) {
       table.increments('id');

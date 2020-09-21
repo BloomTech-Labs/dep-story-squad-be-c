@@ -12,6 +12,10 @@ const findById = async (id) => {
   return db('Child').where({ id }).first().select('*');
 };
 
+const getChildData = async (id) =>{
+  return db('Child').where({ id }).first().select('id', 'name', 'username', 'current_mission', 'avatar_url')
+}
+
 const create = async (profile) => {
   return db('Child').insert(profile).returning('*');
 };
