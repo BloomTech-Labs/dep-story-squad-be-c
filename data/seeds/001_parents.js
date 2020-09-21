@@ -10,7 +10,7 @@ exports.seed = function (knex) {
           id: '00ulthapbErVUwVJy4x6',
           name: faker.name.firstName(),
           email: 'llama001@maildrop.cc',
-          pin: 1234,
+          pin: '1234',
           subscription: 1,
           admin: false,
         },

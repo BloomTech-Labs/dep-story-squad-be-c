@@ -13,15 +13,15 @@ exports.up = (knex) => {
     .createTable('Missions', function (table) {
       table.increments('id');
       table.string('title').notNullable();
-      table.string('writing_prompt').notNullable();
-      table.string('drawing_prompt').notNullable();
+      table.string('writing_prompt', 1000).notNullable();
+      table.string('drawing_prompt', 1000).notNullable();
     })
     .createTable('Child', function (table) {
       table.increments('id');
       table.string('name');
       table.integer('writing_score').notNullable().defaultTo(50);
       table.string('avatar_url');
-      table.integer('pin').notNullable();
+      table.string('pin').notNullable();
       table.string('username').unique().notNullable();
       table
         .string('parent_id')

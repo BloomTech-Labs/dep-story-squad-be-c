@@ -37,19 +37,20 @@ const findOrCreateParent = async (parentObj) => {
 };
 
 const createChild = async (childObj) => {
-  return await db('Child')
+  newChildId = await db('Child')
     .insert(childObj)
-    .returning('id', 'name', 'avatar_url');
+    .returning('id');
+  return await db('Child').where({id: newChildId[0]}).first().select('id', 'name', 'writing_score', 'current_mission', 'avatar_url');
 };
 
 const getChildNamesAndIDS = async (id) => {
-  return await db('Child').where({ parent_id: id }).select('id', 'name', 'pin');
+  return await db('Child').where({ parent_id: id }).select('id', 'name',);
 };
 
 const getChildData = async (id) => {
   return await db('Child')
     .where({ parent_id: id })
-    .select('id', 'name', 'writing_score', 'current_mission');
+    .select('id', 'name', 'writing_score', 'current_mission', 'avatar_url');
 };
 
 module.exports = {
