@@ -45,21 +45,15 @@ router.post('/register', authRequired, function (req, res) {
   //login returns the names and ids of all child accounts and the parent account
   router.get('/login', authRequired, function (req, res) {
     if (req.profile) {
-      Parents.getChildNamesAndIDS(req.profile.id)
-        .then((children) => {
-          if (children) {
-            const namesandIDS = {
-              parent: {
-                id: req.profile.id,
-                name: req.profile.name,
-              },
-              children: children,
-            };
+      Parents.getNamesAndIDS(req.profile.id)
+        .then((data) => {
+            console.log(data)
+          if(data) {
             res.status(200).json({
               message: 'logged in',
-              data: namesandIDS,
+              accounts: data,
             });
-          } else {
+          }else{
             res.status(400).json({
               message: 'no child accounts found',
             });

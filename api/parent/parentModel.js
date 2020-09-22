@@ -43,8 +43,18 @@ const createChild = async (childObj) => {
   return await db('Child').where({id: newChildId[0]}).first().select('id', 'name', 'writing_score', 'current_mission', 'avatar_url');
 };
 
-const getChildNamesAndIDS = async (id) => {
-  return await db('Child').where({ parent_id: id }).select('id', 'name',);
+const getNamesAndIDS = async (id) => {
+  children =  await db('Child').where({ parent_id: id }).select('id', 'name', 'type',);
+  parent = await db('Parent').where({id}).select('id', 'name', 'type',).first();
+  returnArr = [
+    parent,
+    ...children
+  ];
+  console.log(children, 'children');
+  console.log(parent, 'parent');
+  console.log(returnArr, 'return');
+  return returnArr;
+
 };
 
 const getChildData = async (id) => {
@@ -62,6 +72,6 @@ module.exports = {
   remove,
   findOrCreateParent,
   createChild,
-  getChildNamesAndIDS,
+  getNamesAndIDS,
   getChildData,
 };
