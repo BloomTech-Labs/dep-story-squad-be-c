@@ -29,7 +29,7 @@ const authRequired = async (req, res, next) => {
       .verifyAccessToken(idToken, oktaVerifierConfig.expectedAudience)
       .then(async (data) => {
         const jwtUserObj = makeParentObj(data.claims);
-        //console.log(jwtUserObj, 'object')
+        console.log(data, 'object')
         const profile = await Profiles.findById(jwtUserObj.id);
         //res.status(200).json({'message': jwtUserObj});
         if (profile) {

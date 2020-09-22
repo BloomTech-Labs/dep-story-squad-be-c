@@ -12,6 +12,7 @@ exports.seed = function (knex) {
           avatar_url:
             'https://www.uokpl.rs/fpng/d/12-129858_kid-superhero-clipart.png',
           pin: '1234',
+          grade: 5,
           username: faker.internet.userName(),
           parent_id: '00ulthapbErVUwVJy4x6',
         },
@@ -21,6 +22,7 @@ exports.seed = function (knex) {
           avatar_url:
             'https://www.uokpl.rs/fpng/d/12-129858_kid-superhero-clipart.png',
           pin: '1234',
+          grade: 4,
           username: faker.internet.userName(),
           parent_id: '00ulthapbErVUwVJy4x6',
         },

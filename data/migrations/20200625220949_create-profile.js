@@ -8,6 +8,7 @@ exports.up = (knex) => {
       table.string('pin').notNullable();
       table.boolean('admin').notNullable().defaultTo(0);
       table.boolean('subscription').notNullable().defaultTo(0);
+      table.string('type').notNullable().defaultTo('parent');
       table.timestamps(true, true);
     })
     .createTable('Missions', function (table) {
@@ -22,7 +23,10 @@ exports.up = (knex) => {
       table.integer('writing_score').notNullable().defaultTo(50);
       table.string('avatar_url');
       table.string('pin').notNullable();
+      table.string('type').notNullable().defaultTo('child');
       table.string('username').unique().notNullable();
+      table.boolean('dyslexic').notNullable().defaultTo(0);
+      table.integer('grade').notNullable();
       table
         .string('parent_id')
         .notNullable()
