@@ -20,7 +20,7 @@ function createToken(user) {
 //login to parent account
 //needs a pin and a valid okta ID token
 //will return a json web token and child data
-router.get('/:id', authRequired, function (req, res){
+router.post('/:id', authRequired, function (req, res){
   //make sure the pin is in the body
   if(req.body.pin){
     //retrieve the parent from the db

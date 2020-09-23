@@ -17,7 +17,7 @@ function createToken(user) {
         return jwt.sign(payload, secret, options);
 }
 //login endpoint for child
-router.get('/:id', authRequired, function (req, res){
+router.post('/:id', authRequired, function (req, res){
     if(req.body.pin){
     //retrieve the parent from the db
     Child.findById(req.params.id)
