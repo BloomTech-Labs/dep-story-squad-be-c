@@ -29,7 +29,7 @@ router.get('/:id', authRequired, function (req, res){
           const token = createToken(child);
           res.status(200).json({
               "token": token,
-              "data": {
+              "child": {
                       'id': child.id,
                       'name': child.name, 
                       'username': child.username, 

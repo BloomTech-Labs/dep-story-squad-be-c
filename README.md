@@ -10,14 +10,16 @@
 
 # - Parent register and login routes
 >
-> ### POST /api/register
+> ### POST /auth/register
 
 ```
 Expects:
-{
-    pin: <pin for the parent account>,
-    <also some subscription confirmation from stripe>
-}
+    header:{
+        authorization: <oktaID token>
+    }
+    body:{
+        pin: <pin for parent account>
+    }
 ```
 
 ```
@@ -30,23 +32,29 @@ Returns:
 
 <br />
 
-> ### GET /api/login
+> ### GET /auth/login
+
+```
+Expects:
+    header:{
+        authorization: bearer <oktaID token>
+    }
+```
 
 ```
 Returns:
 {
-    parent: {
-              id: <int>,
-              name: <string>
-            }
-    children:[
+    accounts:[
                 {
                     id: <int>,
-                    name: <string>
+                    name: <string>,
+                    type: <either 'parent' or 'child'>
                 },
                 {
                     id: <int>,
-                    name: <string>
+                    name: <string>,
+                    type: <either 'parent' or 'child'>
+
                 }
              ]
 }
@@ -56,36 +64,32 @@ Returns:
 
 # Parent routes
 
-## - Add a new Child
+## - Login to Parent Account
 
-> #### POST /api/parent/:parentID
+> #### Get parent/:parentID
 
 ```
 Expects:
-{
-    name: <str>,
-    username: <str>,
-    avatar_url: <str>,
-    pin: <childs pin>
-}
+    header:{
+        authorization: <oktaID token>
+    }
+    body:{
+        pin: <pin for parent account>
+    }
 ```
 
 ```
 
 Returns:
 {
-  parent_info: {
-                  name: <str>,
-                  email: <str>
-               },
-  child_data:  [
-                   <array of data objects for each of that parents children>
-                   {
-                       name: <str>,
-                       reading_score: <int>,
-                       current_mission: <int>
-                   }
-               ]
+    message: 'logged in',
+    token: token,
+    parent: {
+                id: <parent's ID>
+                name: <str>
+                email: <str>
+                admin: <str>
+            }
 }
 ```
 
@@ -93,24 +97,20 @@ Returns:
 
 ## - Return birds eye child data
 
-> #### GET /api/parent/:parentID/dashboard
+> #### GET /parent/:parentID/dashboard
 
 ```
 Expects:
-{
-    pin: <Parent's pin Number>
-}
+    header:{
+        authorization: bearer <JWT token>
+    }
 ```
 
 ```
 
 Returns:
 {
-  parent_info: {
-                  name: <str>,
-                  email: <str>
-               },
-  child_data:  [
+                [
                    <array of data objects for each of that parents children>
                    {
                        name: <str>,
@@ -124,35 +124,71 @@ Returns:
 
 <br />
 
-# Child routes
+## - Add a new Child
 
-## - return a child's data
-
-> #### POST /api/child/:childID/dashboard
+> #### Post parent/:parentID
 
 ```
 Expects:
-{
-        pin: <childs pin number>
-}
+    header:{
+        authorization: bearer <JWT token>
+    }
+
+body:{
+        name: <str>,
+        username: <str>,
+        avatar_url: <str>,
+        pin: <childs pin>,
+        grade: <int>,
+        dyslexic: <boolean>
+    }
+```
+
+<br />
+
+# Child routes
+
+## - login for a child account
+
+> #### Get /child/:childID
+
+```
+Expects:
+    header:{
+        authorization: <oktaID token>
+    }
+    body:{
+        pin: <pin for parent account>
+    }
 ```
 
 ```
 Returns:
-    {
-        "name": <string>,
-        "username": <string>,
-        "avatar_url": <string>,
-        "parent_id": <integer>,
-        "current_mission": <string>
-    }
+Returns:
+{
+    message: 'logged in',
+    token: token,
+    child:{
+            name: <string>,
+            username: <string>,
+            avatar_url: <string>,
+            parent_id: <integer>,
+            current_mission: <string>
+        }
 ```
 
 <br />
 
 ## - get a child's current mission
 
-> #### GET /api/child/:childID/mission
+> #### GET /child/:childID/mission
+
+```
+Expects:
+    header:{
+        authorization: bearer <JWT token>
+    }
+```
 
 ```
 Returns:

@@ -37,11 +37,12 @@ router.post('/multi-image-upload-test', async (req, res)=>{
                     fileLocation = fileArray[i].location;
                     images.push(fileLocation);
                 };
-                return res.status(200).json({
+                /*return res.status(200).json({
                     'message': 'uploaded files',
                     'file_urls': images
                     
-                })
+                })*/
+                
             }
         }
     });
