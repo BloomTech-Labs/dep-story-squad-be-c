@@ -43,7 +43,7 @@ router.get('/:id', authRequired, function (req, res){
                               "email": req.profile.email,
                               "admin": req.profile.admin
                             },
-                  "childData": childData
+                  
                   
                 });
               }else{
@@ -83,6 +83,7 @@ router.get('/:id', authRequired, function (req, res){
 //make a child account
 
 router.post('/:id', checkToken, function (req, res) {
+  if(req.decodedToken.sub == req.params.id){
   Parents.findById(req.params.id)
     .then((parent) => {
       if (parent) {
@@ -122,8 +123,39 @@ router.post('/:id', checkToken, function (req, res) {
         error: err,
       });
     });
+    }else{
+        res.status(400).json({
+            "message": "The ID provided is not associated with the token provided"
+        })
+    }
 });
 
+router.get('/:id/dashboard', checkToken, function (req, res){
+  if(req.decodedToken.sub == req.params.id){
+          Parents.getChildData(req.params.id)
+            .then((childData) => {
+              if (childData) {
+                res.status(200).json({
+                  childData
+                });
+              }else{
+                res.status(500).json({
+                  "message": 'no child data found',
+                });
+              }
+            })
+            .catch((err) => {
+              res.status(500).json({
+                "message": 'error retrieving child data',
+                "error": err
+              });
+            });
+  }else{
+        res.status(400).json({
+            "message": "The ID provided is not associated with the token provided"
+        })
+    }
+});
 
 //put for parent
 
