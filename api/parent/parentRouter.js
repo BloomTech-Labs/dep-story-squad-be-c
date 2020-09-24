@@ -83,7 +83,7 @@ router.post('/:id', authRequired, function (req, res){
 
 //make a child account
 
-router.post('/:id', checkToken, function (req, res) {
+router.post('/:id/children', checkToken, function (req, res) {
   if(req.decodedToken.sub == req.params.id){
   Parents.findById(req.params.id)
     .then((parent) => {
@@ -131,7 +131,7 @@ router.post('/:id', checkToken, function (req, res) {
     }
 });
 
-router.delete('/:id/:child_id', checkToken, function(req,res){
+router.delete('/:id/children/:child_id', checkToken, function(req,res){
   if(req.decodedToken.sub == req.params.id){
     Child.findById(req.params.child_id)
       .then((child)=>{
