@@ -3,8 +3,11 @@ const authRequired = require('../middleware/authRequired');
 const Child = require('./childModel');
 const router = express.Router();
 const jwt = require('jsonwebtoken');
+const upload = require('../middleware/multer');
+const multiUpload = upload.array('images', 5);
 const checkToken = require('../middleware/jwtRestricted');
 
+//token creator for our JWT
 function createToken(user) {
     const payload = {
         sub: user.id,
@@ -16,6 +19,9 @@ function createToken(user) {
     };
         return jwt.sign(payload, secret, options);
 }
+
+
+
 //login endpoint for child
 router.post('/:id', authRequired, function (req, res){
     if(req.body.pin){
@@ -90,12 +96,96 @@ router.get('/:id/mission', checkToken, function (req,res){
     }
 })
 
+
 //post story and drawing submission
     //use the multer function to send to the aws bucket and get the url's back
     //send each of those url's to the ds endpoint to get scores and flags back
     //add those scores and flags to the urls to make each post object
     //add each of those post objects to the db
 
+router.post('/:id/mission', /*checkToken,*/ async function (req,res){
+    //if(req.decodedToken.sub == req.params.id){
 
+        child = await Child.findById(req.params.id);
+        
+        multiUpload(req, res, async function(err){
+            //console.log('files', req.files);
+            if(err){
+                return res.status(500).json({
+                    status: 'fail',
+                    message: 'Error: No File Selected'
+                });
+            }else{
+                if(req.files === undefined){
+                    return res.json({'message': 'file undefined'})
+                }
+                else{
+                    const fileArray = req.files
+                    let fileLocation = '';
+                    const images = [];
+                    for(let i = 0; i < fileArray.length; i ++){
+                        fileLocation = fileArray[i].location;
+                        images.push(fileLocation);
+                    };
+                    //this is where the axios calls to ds would be made
+                    //with the url's in the body
+                    //we get the scores and flags back 
+                    //and construct the submission objects to save to the DB
+                    submissions = []
+                    images.map((url)=>{
+                        result = mockDSCall(url);
+                        submissionObject = {
+                            file_path: url,
+                            ...result,
+                            mission_id: child.current_mission,
+                            child_id: child.id
+                        }
+                        submissions.push(submissionObject);
+                        })
+                    console.log(submissions)
+                    //so now we should have an array of objects ready to put in the DB
+                    await submissions.map((obj)=>{
+                         Child.addWriting(obj)
+                            .then(response=>{
+                                console.log(response)
+                            }).catch(err=>{
+                                res.json({
+                                    "error": err
+                                })
+                            })
+                    })
+                    //if an error wasn't thrown that means that we've successfully submitted!
+                    res.status(200).json({
+                        "message": "we got your submission!"
+                    })
+                }
+            }
+        });
+    /*}else{
+        res.status(400).json({
+            "message": "The ID provided is not associated with the token provided"
+        })
+    }*/
+});
+
+//get past submissions
+router.get('/:id/archive', /*checkToken,*/ function(req, res){
+    Child.getArchive(req.params.id)
+        .then(submissions=>{
+            res.json({submissions});
+        })
+        .catch(err=>{
+            res.json({err})
+        })
+});
+
+
+
+const mockDSCall = function(){
+    return {
+        score: Math.trunc(Math.random() * 100),
+        //flagged: false
+    }
+}
 
 module.exports = router;

@@ -32,7 +32,7 @@ Returns:
 
 <br />
 
-> ### GET /auth/login
+> ### POST /auth/login
 
 ```
 Expects:

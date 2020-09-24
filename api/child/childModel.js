@@ -13,7 +13,7 @@ const findById = async (id) => {
 };
 
 const getChildData = async (id) =>{
-  return db('Child').where({ id }).first().select('id', 'name', 'username', 'current_mission', 'avatar_url')
+  return db('Child').where({ id }).first().select('id', 'name', 'username', 'current_mission', 'avatar_url');
 }
 
 const create = async (profile) => {
@@ -82,8 +82,12 @@ const addDrawing = async (drawingObj) => {
 };
 
 const addWriting = async (writingObj) => {
-  return db('Drawing_Responses').insert(writingObj).returning('*');
+  return db('Writing_Responses').insert(writingObj).returning('*');
 };
+
+const getArchive = async (id) =>{
+  return db('Writing_Responses').where({child_id: id}).select('*')
+}
 
 module.exports = {
   findAll,
@@ -97,4 +101,5 @@ module.exports = {
   getCurrentMission,
   addDrawing,
   addWriting,
+  getArchive
 };

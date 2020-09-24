@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const upload = require('./multer');
+const upload = require('../middleware/multer');
 const singleUpload = upload.single('image');
 const multiUpload = upload.array('images', 5);
 
@@ -37,12 +37,11 @@ router.post('/multi-image-upload-test', async (req, res)=>{
                     fileLocation = fileArray[i].location;
                     images.push(fileLocation);
                 };
-                /*return res.status(200).json({
-                    'message': 'uploaded files',
-                    'file_urls': images
-                    
-                })*/
-                
+                //this is where an axios call to ds would be made
+                res.json({
+                    fileArray
+                })
+
             }
         }
     });
