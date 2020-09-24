@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const authRequired = require('../middleware/authRequired');
 const Parents = require('./parentModel');
+const Child = require('../child/childModel')
 const jwt = require("jsonwebtoken");
 const checkToken = require('../middleware/jwtRestricted');
 
@@ -129,6 +130,41 @@ router.post('/:id', checkToken, function (req, res) {
         })
     }
 });
+
+router.delete('/:id/:child_id', checkToken, function(req,res){
+  if(req.decodedToken.sub == req.params.id){
+    Child.findById(req.params.child_id)
+      .then((child)=>{
+        if(child && child.parent_id === req.params.id){
+          Child.remove(req.params.child_id)
+            .then(response=>{
+              res.status(200).json({
+                "message": "child removed from DB"
+              })
+            })
+            .catch(err=>{
+              res.status(500).json({
+                "message": "error removing child from DB",
+                "error": err
+              })
+            })
+        }else{
+          res.status(400).json({
+            "message": "unauthorized"
+          })
+        }
+      }).catch(err=>{
+        res.status(500).json({
+          "message": "error retrieving child from DB",
+          "error": err
+        })
+      })
+  }else{
+        res.status(400).json({
+            "message": "The ID provided is not associated with the token provided"
+        })
+    }
+})
 
 router.get('/:id/dashboard', checkToken, function (req, res){
   if(req.decodedToken.sub == req.params.id){
