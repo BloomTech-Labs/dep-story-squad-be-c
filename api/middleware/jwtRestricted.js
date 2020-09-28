@@ -12,9 +12,14 @@ module.exports = (req, res, next) => {
           console.log(error, decodedToken)  
           res.status(401).json({ errorMessage: "Invalid Credentials" });
         } else {
-          req.decodedToken = decodedToken;
-          console.log(decodedToken)
-          next();
+            req.decodedToken = decodedToken;
+            if(req.decodedToken.sub == req.params.id){
+                next();
+            }else{
+                res.status(400).json({
+                    "message": "The ID provided is not associated with the token provided"
+                })
+            }
         }
       });
     } else {

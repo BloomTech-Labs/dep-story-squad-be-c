@@ -39,10 +39,10 @@ router.post('/:id', authRequired, function (req, res){
                   "message": 'logged in',
                   "token": token,
                   "parent": {
-                              "id": req.profile.id,
-                              "name": req.profile.name,
-                              "email": req.profile.email,
-                              "admin": req.profile.admin
+                              "id": parent.id,
+                              "name": parent.name,
+                              "email": parent.email,
+                              "admin": parent.admin
                             },
                   
                   
@@ -84,7 +84,6 @@ router.post('/:id', authRequired, function (req, res){
 //make a child account
 
 router.post('/:id/children', checkToken, function (req, res) {
-  if(req.decodedToken.sub == req.params.id){
   Parents.findById(req.params.id)
     .then((parent) => {
       if (parent) {
@@ -98,7 +97,7 @@ router.post('/:id/children', checkToken, function (req, res) {
             if (response) {
               res.status(200).json({
                 message: 'created a new child',
-                ...response,
+                newChild: response
               });
             } else {
               res.status(500).json({
@@ -124,15 +123,10 @@ router.post('/:id/children', checkToken, function (req, res) {
         error: err,
       });
     });
-    }else{
-        res.status(400).json({
-            "message": "The ID provided is not associated with the token provided"
-        })
-    }
+    
 });
 
 router.delete('/:id/children/:child_id', checkToken, function(req,res){
-  if(req.decodedToken.sub == req.params.id){
     Child.findById(req.params.child_id)
       .then((child)=>{
         if(child && child.parent_id === req.params.id){
@@ -159,15 +153,9 @@ router.delete('/:id/children/:child_id', checkToken, function(req,res){
           "error": err
         })
       })
-  }else{
-        res.status(400).json({
-            "message": "The ID provided is not associated with the token provided"
-        })
-    }
 })
 
 router.get('/:id/dashboard', checkToken, function (req, res){
-  if(req.decodedToken.sub == req.params.id){
           Parents.getChildData(req.params.id)
             .then((childData) => {
               if (childData) {
@@ -186,18 +174,14 @@ router.get('/:id/dashboard', checkToken, function (req, res){
                 "error": err
               });
             });
-  }else{
-        res.status(400).json({
-            "message": "The ID provided is not associated with the token provided"
-        })
-    }
+
 });
 
 //put for parent
 
 //delete for parent
 
-//delete for child account
+//delete for parent
 
 
 module.exports = router;
