@@ -45,11 +45,26 @@ const createChild = async (childObj) => {
 
 const getNamesAndIDS = async (id) => {
   children =  await db('Child').where({ parent_id: id }).select('id', 'name', 'type',);
-  parent = await db('Parent').where({id}).select('id', 'name', 'type',).first();
-  returnArr = [
-    parent,
-    ...children
-  ];
+  parent = await db('Parent').where({id}).select('id', 'name', 'type', 'admin').first();
+  if(parent.admin == false || 0){
+    returnArr = [
+      {
+        id: parent.id,
+        name: parent.name,
+        type: parent.type
+      },
+      ...children
+    ];
+  }else{
+    returnArr = [
+      {
+        id: parent.id,
+        name: parent.name,
+        type: 'admin'
+      },
+      ...children
+    ];
+  }
   console.log(children, 'children');
   console.log(parent, 'parent');
   console.log(returnArr, 'return');

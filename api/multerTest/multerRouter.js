@@ -8,6 +8,7 @@ router.get('/', function(req,res){
     return res.json({'message': 'test route working'});
 })
 
+//Example of what the illustration submission endpoint could look like
 router.post('/single-image-upload-test', function(req, res){
     singleUpload(req, res, function(err){
         if(req.file === undefined){
@@ -17,6 +18,7 @@ router.post('/single-image-upload-test', function(req, res){
     });
 });
 
+//example of what the writing submission could look like
 router.post('/multi-image-upload-test', async (req, res)=>{
     multiUpload(req, res, function(err){
         console.log('files', req.files);

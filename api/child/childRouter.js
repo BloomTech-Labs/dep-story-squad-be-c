@@ -97,17 +97,18 @@ router.get('/:id/mission', checkToken, function (req,res){
 })
 
 
-//post story and drawing submission
+//post writting submission
     //use the multer function to send to the aws bucket and get the url's back
     //send each of those url's to the ds endpoint to get scores and flags back
     //add those scores and flags to the urls to make each post object
     //add each of those post objects to the db
 
-router.post('/:id/mission', /*checkToken,*/ async function (req,res){
-    //if(req.decodedToken.sub == req.params.id){
+router.post('/:id/mission/write', checkToken, async function (req,res){
 
         child = await Child.findById(req.params.id);
-        
+        //we run the images through this multer function
+        //we send our files to an AWS bucket
+        //we get back an array of urls for the uploaded files
         multiUpload(req, res, async function(err){
             //console.log('files', req.files);
             if(err){
@@ -161,11 +162,6 @@ router.post('/:id/mission', /*checkToken,*/ async function (req,res){
                 }
             }
         });
-    /*}else{
-        res.status(400).json({
-            "message": "The ID provided is not associated with the token provided"
-        })
-    }*/
 });
 
 //get past submissions
