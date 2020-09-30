@@ -25,6 +25,7 @@ const authRouter = require('./auth/authRouter')
 const parentRouter = require('./parent/parentRouter');
 const childRouter = require('./child/childRouter');
 const multerRouter = require('./multerTest/multerRouter');
+const stripeRouter = require('./stripe/stripeRouter');
 
 const app = express();
 
@@ -56,6 +57,7 @@ app.use('/auth', authRouter);
 app.use('/parent', parentRouter);
 app.use('/child', childRouter);
 app.use('/multer', multerRouter);
+app.use('/stripe', stripeRouter);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
