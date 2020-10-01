@@ -29,7 +29,7 @@ const authRequired = async (req, res, next) => {
       .verifyAccessToken(idToken, oktaVerifierConfig.expectedAudience)
       .then(async (data) => {
         const jwtUserObj = makeParentObj(data.claims);
-        console.log(data, 'object')
+        console.log(data, 'object');
         const profile = await Profiles.findById(jwtUserObj.id);
         //res.status(200).json({'message': jwtUserObj});
         if (profile) {
@@ -40,13 +40,14 @@ const authRequired = async (req, res, next) => {
           throw new Error('unable to process id token');
         }
         next();
-      }).catch(err=>{
-        res.status(400).json({
-          'message': 'invalid token',
-          'error': err
-        })
       })
-  }catch (err) {
+      .catch((err) => {
+        res.status(400).json({
+          message: 'invalid token',
+          error: err,
+        });
+      });
+  } catch (err) {
     next(createError(401, err));
   }
 };

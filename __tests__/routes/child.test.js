@@ -40,13 +40,6 @@ describe('Child router endpoints', () => {
     current_mission: 1,
   };
 
-  const mission = {
-    mission_id: 1,
-    read: 'hello',
-    write: 'test',
-    draw: 'test',
-  };
-
   describe('POST /child/:id', () => {
     it('should return 400 when nothing is sent', () => {
       Child.findById.mockResolvedValue(child);
@@ -91,26 +84,24 @@ describe('Child router endpoints', () => {
 
   it('should allow multiple file uploads', () => {
     Child.findById.mockResolvedValue(child);
-    Child.addWriting.mockResolvedValue({})
+    Child.addWriting.mockResolvedValue({});
     return request(server)
-    .post('/child/1/mission/write')
-    .attach('images', '__tests__/surprised.jpg')
-    .attach('images', '__tests__/surprised.jpg')
-    .then(res => {
-      expect(res.status).toBe(200)
-    })
-  })
+      .post('/child/1/mission/write')
+      .attach('images', '__tests__/surprised.jpg')
+      .attach('images', '__tests__/surprised.jpg')
+      .then((res) => {
+        expect(res.status).toBe(200);
+      });
+  });
 
   it('should allow fingle file uploads', () => {
     Child.findById.mockResolvedValue(child);
-    Child.addWriting.mockResolvedValue({})
+    Child.addWriting.mockResolvedValue({});
     return request(server)
-    .post('/child/1/mission/draw')
-    .attach('image', '__tests__/surprised.jpg')
-    .then(res => {
-      console.log(res)
-      expect(res.status).toBe(200)
-    })
-  })
-
+      .post('/child/1/mission/draw')
+      .attach('image', '__tests__/surprised.jpg')
+      .then((res) => {
+        expect(res.status).toBe(200);
+      });
+  });
 });

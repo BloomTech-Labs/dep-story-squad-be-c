@@ -204,15 +204,17 @@ Returns:
 
 <br />
 
-## - post a new mission submission
+## - post a new writing submission
 
-> #### POST /api/child/:childID/mission/:missionID
+> #### POST /api/child/:childID/mission/write
 > > #### Note: the body will need to be form data not JSON
 
 ```
 Expects:
-        writing: <writing png's>,
-        drawing: <drawing png>
+    header: {
+        authorization: bearer <JWT token>
+    }
+        images: <writing png's>,
 
 ```
 
@@ -222,7 +224,28 @@ Returns:
         message: "We got your submission!"
     }
 ```
+<br />
 
+## - post a new drawing submission
+
+> #### POST /api/child/:childID/mission/write
+> > #### Note: the body will need to be for data not JSON
+
+```
+Expects:
+    header: {
+        authorization: bearer <JWT token>
+    }
+        image: <writing png's>,
+
+```
+
+```
+Returns:
+    {
+        message: "We got your submission!"
+    }
+```
 <br />
 
 # DS and Admin endpoints still need to be planned out

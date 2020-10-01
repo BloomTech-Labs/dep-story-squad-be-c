@@ -21,7 +21,7 @@ const swaggerUIOptions = {
 
 //###[  Routers ]###
 const indexRouter = require('./index/indexRouter');
-const authRouter = require('./auth/authRouter')
+const authRouter = require('./auth/authRouter');
 const parentRouter = require('./parent/parentRouter');
 const childRouter = require('./child/childRouter');
 const multerRouter = require('./multerTest/multerRouter');
