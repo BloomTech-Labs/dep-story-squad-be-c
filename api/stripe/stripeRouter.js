@@ -1,6 +1,5 @@
 const express = require('express');
 const router = express.Router();
-const uuid = require('uuid');
 
 // TODO: add stripe api key
 const stripe = require('stripe')(process.env.STRIPE_API_KEY);
@@ -15,6 +14,7 @@ router.post('/create-customer', async (req, res) => {
     email: req.body.email,
   });
 
+  // TODO:
   // save the customer.id as stripeCustomerId
   // in your database.
 

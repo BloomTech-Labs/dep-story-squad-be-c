@@ -9,6 +9,7 @@ exports.up = (knex) => {
       table.boolean('admin').notNullable().defaultTo(0);
       table.boolean('subscription').notNullable().defaultTo(0);
       table.string('type').notNullable().defaultTo('parent');
+      table.string('stripeCustomerId').defaultTo(null)
       table.timestamps(true, true);
     })
     .createTable('Missions', function (table) {
