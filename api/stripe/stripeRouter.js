@@ -1,27 +1,40 @@
 const express = require('express');
 const router = express.Router();
+const Parents = require('../parent/parentModel');
+const checkToken = require('../middleware/jwtRestricted');
 
-// TODO: add stripe api key
 const stripe = require('stripe')(process.env.STRIPE_API_KEY);
 
 router.get('/', (req, res) => {
   res.send('Stripe API Working');
 });
 
-router.post('/create-customer', async (req, res) => {
+router.post('/create-customer', checkToken, async (req, res) => {
   // Create a new customer object
   const customer = await stripe.customers.create({
     email: req.body.email,
   });
-
-  // TODO:
-  // save the customer.id as stripeCustomerId
-  // in your database.
+  Parents.findBy({ email: req.body.email })
+    .first()
+    .then((parent) => {
+      if (parent) {
+        parent.stripeCustomerId = customerId;
+        Parents.update(parent.id, parent)
+        .then(resp => {
+          res.status(200).json(resp)
+        })
+        .catch(err => {
+          res.status(500).json(err)
+        })
+      } else {
+        res.status(400).json({ message: 'parent not found' });
+      }
+    });
 
   res.send({ customer });
 });
 
-router.post('/create-subscription', async (req, res) => {
+router.post('/create-subscription', checkToken, async (req, res) => {
   // Attach the payment method to the customer
   try {
     await stripe.paymentMethods.attach(req.body.paymentMethodId, {
@@ -81,7 +94,7 @@ router.post('/cancel-subscription', async (req, res) => {
   res.send(deletedSubscription);
 });
 
-router.post('/update-subscription', async (req, res) => {
+router.post('/update-subscription', checkToken, async (req, res) => {
   const subscription = await stripe.subscriptions.retrieve(
     req.body.subscriptionId
   );
