@@ -77,7 +77,7 @@ describe('Child router endpoints', () => {
         .post('/child/1')
         .send({ pin: '1234' })
         .then((res) => {
-          console.log(res);
+          console.log(child);
           expect(res.status).toBe(200);
         });
     });
