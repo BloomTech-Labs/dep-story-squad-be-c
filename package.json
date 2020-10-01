@@ -3,7 +3,10 @@
   "version": "1.0.0",
   "private": false,
   "license": "MIT",
-  "repository": "github:Lambda-School-Labs/labs-api-starter",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Lambda-School-Labs/labs-api-starter.git"
+  },
   "scripts": {
     "start": "node server.js",
     "watch:dev": "nodemon",
@@ -75,5 +78,13 @@
     "nodemon": "^2.0.4",
     "prettier": "^2.0.5",
     "supertest": "^4.0.2"
-  }
+  },
+  "description": "> ## website here",
+  "bugs": {
+    "url": "https://github.com/Lambda-School-Labs/labs-api-starter/issues"
+  },
+  "homepage": "https://github.com/Lambda-School-Labs/labs-api-starter#readme",
+  "main": ".eslintrc.js",
+  "keywords": [],
+  "author": ""
 }
