@@ -127,7 +127,7 @@ router.delete('/:id/children/:child_id', checkToken, function (req, res) {
     .then((child) => {
       if (child && child.parent_id === req.params.id) {
         Child.remove(req.params.child_id)
-          .then((response) => {
+          .then(() => {
             res.status(200).json({
               message: 'child removed from DB',
             });

@@ -37,7 +37,7 @@ const findOrCreateParent = async (parentObj) => {
 };
 
 const createChild = async (childObj) => {
-  newChildId = await db('Child').insert(childObj).returning('id');
+  const newChildId = await db('Child').insert(childObj).returning('id');
   return await db('Child')
     .where({ id: newChildId[0] })
     .first()
@@ -45,13 +45,14 @@ const createChild = async (childObj) => {
 };
 
 const getNamesAndIDS = async (id) => {
-  children = await db('Child')
+  const children = await db('Child')
     .where({ parent_id: id })
     .select('id', 'name', 'type');
-  parent = await db('Parent')
+  const parent = await db('Parent')
     .where({ id })
     .select('id', 'name', 'type', 'admin')
     .first();
+  let returnArr = [];
   if (parent.admin == false || 0) {
     returnArr = [
       {

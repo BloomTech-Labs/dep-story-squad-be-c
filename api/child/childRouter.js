@@ -100,7 +100,7 @@ router.get('/:id/mission', function (req, res) {
 //add each of those post objects to the db
 
 router.post('/:id/mission/write', checkToken, async function (req, res) {
-  child = await Child.findById(req.params.id);
+  let child = await Child.findById(req.params.id);
   //we run the images through this multer function
   //we send our files to an AWS bucket
   //we get back an array of urls for the uploaded files
@@ -126,10 +126,10 @@ router.post('/:id/mission/write', checkToken, async function (req, res) {
         //with the url's in the body
         //we get the scores and flags back
         //and construct the submission objects to save to the DB
-        submissions = [];
+        let submissions = [];
         images.map((url) => {
-          result = mockDSCall(url);
-          submissionObject = {
+          let result = mockDSCall(url);
+          let submissionObject = {
             file_path: url,
             ...result,
             mission_id: child.current_mission,
@@ -160,7 +160,7 @@ router.post('/:id/mission/write', checkToken, async function (req, res) {
 });
 
 router.post('/:id/mission/draw', checkToken, async function (req, res) {
-  child = await Child.findById(req.params.id);
+  let child = await Child.findById(req.params.id);
 
   singleUpload(req, res, async function (err) {
     //console.log('files', req.files);
@@ -173,8 +173,8 @@ router.post('/:id/mission/draw', checkToken, async function (req, res) {
       if (req.file === undefined) {
         return res.json({ message: 'file undefined' });
       } else {
-        result = mockDSCall(req.file.location);
-        submissionObject = {
+        let result = mockDSCall(req.file.location);
+        let submissionObject = {
           file_path: req.file.location,
           ...result,
           mission_id: child.current_mission,

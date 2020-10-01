@@ -12,7 +12,7 @@ router.get('/', function (req, res) {
 router.post('/single-image-upload-test', function (req, res) {
   singleUpload(req, res, function (err) {
     if (req.file === undefined) {
-      return res.json({ message: 'file undefined' });
+      return res.json({ message: 'file undefined', error: err });
     }
     return res.json({ imageUrl: req.file.location });
   });
