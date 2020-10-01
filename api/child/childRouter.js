@@ -50,7 +50,7 @@ router.post('/:id', authRequired, function (req, res) {
       })
       .catch((err) => {
         res.status(400).json({
-          message: 'there is no parent with that ID',
+          message: 'there is no child with that ID',
           error: err,
         });
       });
