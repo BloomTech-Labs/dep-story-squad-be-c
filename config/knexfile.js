@@ -9,7 +9,7 @@ module.exports = {
       port: 5432,
       user: 'postgres',
       database: 'StorySquad',
-      password: 'J3$uspenguin',
+      password: 'Keyblades1',
     },
     migrations: { directory: '../data/migrations' },
     seeds: { directory: '../data/seeds' },
@@ -24,6 +24,14 @@ module.exports = {
     connection: process.env.DATABASE_URL,
     migrations: { directory: '../data/migrations' },
     seeds: { directory: '../data/seeds' },
+  },
+
+  ci: {
+    client: 'pg',
+    connection: process.env.DATABASE_URL,
+    migrations: { directory: '../data/migrations' },
+    seeds: { directory: '../data/seeds' },
+    pool: { min: 0, max: 5 },
   },
 
   production: {
