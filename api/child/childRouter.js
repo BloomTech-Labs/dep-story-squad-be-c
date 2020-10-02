@@ -63,7 +63,7 @@ router.post('/:id', authRequired, function (req, res) {
 
 //get current mission endpoint
 //check the token
-router.get('/:id/mission', function (req, res) {
+router.get('/:id/mission', checkToken, function (req, res) {
   if (req.decodedToken.sub == req.params.id) {
     Child.findById(req.params.id)
       .then((child) => {
