@@ -1,17 +1,17 @@
 const request = require('supertest');
 const express = require('express');
-const Parents = require('../../api/parent/parentModel');
-const parentRouter = require('../../api/parent/parentRouter');
+const Parents = require('../../api/parent/parentModel.js');
+const parentRouter = require('../../api/parent/parentRouter.js');
 const server = express();
 server.use(express.json());
 
-jest.mock('../../api/parent/parentModel');
+jest.mock('../../api/parent/parentModel.js');
 
-jest.mock('../../api/middleware/authRequired', () =>
+jest.mock('../../api/middleware/authRequired.js', () =>
   jest.fn((req, res, next) => next())
 );
 
-jest.mock('../../api/middleware/jwtRestricted', () =>
+jest.mock('../../api/middleware/jwtRestricted.js', () =>
   jest.fn((req, res, next) => next())
 );
 
