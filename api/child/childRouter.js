@@ -112,7 +112,7 @@ router.post('/:id/mission/write', checkToken, async function (req, res) {
         message: 'Error: No File Selected',
       });
     } else {
-      if (req.files === undefined) {
+      if (req.files[0] === undefined) {
         return res.json({ message: 'file undefined' });
       } else {
         const fileArray = req.files;
