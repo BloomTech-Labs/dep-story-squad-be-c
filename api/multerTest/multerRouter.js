@@ -21,14 +21,14 @@ router.post('/single-image-upload-test', function (req, res) {
 //example of what the writing submission could look like
 router.post('/multi-image-upload-test', async (req, res) => {
   multiUpload(req, res, function (err) {
-    console.log('files', req.files);
+    console.log('response from aws', req.files);
     if (err) {
       return res.status(500).json({
         status: 'fail',
         message: 'Error: No File Selected',
       });
     } else {
-      if (req.files === undefined) {
+      if (req.files === undefined || req.files.length < 1) {
         return res.json({ message: 'file undefined' });
       } else {
         const fileArray = req.files;
@@ -40,7 +40,7 @@ router.post('/multi-image-upload-test', async (req, res) => {
         }
         //this is where an axios call to ds would be made
         res.json({
-          fileArray,
+          images,
         });
       }
     }

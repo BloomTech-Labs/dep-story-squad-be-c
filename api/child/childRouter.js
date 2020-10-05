@@ -100,6 +100,7 @@ router.get('/:id/mission', function (req, res) {
 //add each of those post objects to the db
 
 router.post('/:id/mission/write', checkToken, async function (req, res) {
+  console.log(req, 'bodylog')
   let child = await Child.findById(req.params.id);
   //we run the images through this multer function
   //we send our files to an AWS bucket
@@ -137,12 +138,12 @@ router.post('/:id/mission/write', checkToken, async function (req, res) {
           };
           submissions.push(submissionObject);
         });
-        console.log(submissions);
+        //console.log(submissions);
         //so now we should have an array of objects ready to put in the DB
         await submissions.map((obj) => {
           Child.addWriting(obj)
             .then((response) => {
-              console.log(response);
+              //console.log(response);
             })
             .catch((err) => {
               res.json({
