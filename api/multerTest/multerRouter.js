@@ -24,6 +24,7 @@ router.post('/multi-image-upload-test', async (req, res) => {
     console.log('response from aws', req.files);
     if (err) {
       return res.status(500).json({
+        error: err,
         status: 'fail',
         message: 'Error: No File Selected',
       });
