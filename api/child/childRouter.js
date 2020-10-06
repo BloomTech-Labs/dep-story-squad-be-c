@@ -3,7 +3,7 @@ const authRequired = require('../middleware/authRequired');
 const Child = require('./childModel');
 const router = express.Router();
 const jwt = require('jsonwebtoken');
-const checkProgress = require('../middleware/checkProgress')
+const checkProgress = require('../middleware/checkProgress');
 const upload = require('../middleware/multer');
 const multiUpload = upload.array('image', 5);
 const singleUpload = upload.single('image');
@@ -65,28 +65,27 @@ router.post('/:id', authRequired, function (req, res) {
 //get current mission endpoint
 //check the token
 router.get('/:id/mission', checkToken, checkProgress, function (req, res) {
-    Child.findById(req.params.id)
-      .then((child) => {
-        Child.getCurrentMission(child.current_mission)
-          .then((mission) => {
-            res.status(200).json({
-              ...mission,
-            });
-          })
-          .catch((err) => {
-            res.status(500).json({
-              message: 'error retrieving mission',
-              error: err,
-            });
+  Child.findById(req.params.id)
+    .then((child) => {
+      Child.getCurrentMission(child.current_mission)
+        .then((mission) => {
+          res.status(200).json({
+            ...mission,
           });
-      })
-      .catch((err) => {
-        res.status(500).json({
-          message: 'error retrieving child data',
-          error: err,
+        })
+        .catch((err) => {
+          res.status(500).json({
+            message: 'error retrieving mission',
+            error: err,
+          });
         });
+    })
+    .catch((err) => {
+      res.status(500).json({
+        message: 'error retrieving child data',
+        error: err,
       });
-  
+    });
 });
 
 //post writting submission
@@ -96,7 +95,7 @@ router.get('/:id/mission', checkToken, checkProgress, function (req, res) {
 //add each of those post objects to the db
 
 router.post('/:id/mission/write', checkToken, async function (req, res) {
-  console.log(req, 'bodylog')
+  console.log(req, 'bodylog');
   let child = await Child.findById(req.params.id);
   //we run the images through this multer function
   //we send our files to an AWS bucket
@@ -138,7 +137,7 @@ router.post('/:id/mission/write', checkToken, async function (req, res) {
         await submissions.map((obj) => {
           Child.addWriting(obj)
             .then((response) => {
-              //console.log(response);
+              console.log(response);
             })
             .catch((err) => {
               res.json({
@@ -189,16 +188,15 @@ router.post('/:id/mission/draw', checkToken, async function (req, res) {
 });
 
 //get past submissions
-router.get('/:id/archive',checkToken, function (req, res) {
-    Child.getArchive(req.params.id)
-      .then((submissions) => {
-        res.json({ submissions });
-      })
-      .catch((err) => {
-        res.json({ err });
-      });
-  }
-);
+router.get('/:id/archive', checkToken, function (req, res) {
+  Child.getArchive(req.params.id)
+    .then((submissions) => {
+      res.json({ submissions });
+    })
+    .catch((err) => {
+      res.json({ err });
+    });
+});
 
 const mockDSCall = function () {
   return {

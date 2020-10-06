@@ -54,15 +54,17 @@ exports.up = (knex) => {
         .onUpdate('CASCADE')
         .onDelete('CASCADE');
     })
-    .createTable('Mission_Progress', function (table){
+    .createTable('Mission_Progress', function (table) {
       table.increments('id');
-      table.integer('child_id')
+      table
+        .integer('child_id')
         .notNullable()
         .unsigned()
         .references('Child.id')
         .onUpdate('CASCADE')
         .onDelete('CASCADE');
-      table.integer('mission_id')
+      table
+        .integer('mission_id')
         .notNullable()
         .unsigned()
         .defaultTo(1)

@@ -26,6 +26,6 @@ exports.seed = function (knex) {
           username: faker.internet.userName(),
           parent_id: '00ulthapbErVUwVJy4x6',
         },
-        ]);
+      ]);
     });
 };
