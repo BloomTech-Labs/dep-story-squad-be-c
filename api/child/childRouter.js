@@ -4,7 +4,7 @@ const Child = require('./childModel');
 const router = express.Router();
 const jwt = require('jsonwebtoken');
 const upload = require('../middleware/multer');
-const multiUpload = upload.array('images', 5);
+const multiUpload = upload.array('image', 5);
 const singleUpload = upload.single('image');
 const checkToken = require('../middleware/jwtRestricted');
 
