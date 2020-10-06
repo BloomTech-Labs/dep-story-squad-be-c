@@ -44,6 +44,8 @@ jobs:
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
           OKTA_ORG_URL: ${{ secrets.OKTA_ORG_URL }}
           OKTA_CLIENT_ID: ${{ secrets.OKTA_CLIENT_ID }}
+          ACCESSKEYID: ${{ secrets.ACCESSKEYID }}
+          SECRETKEY: ${{ secrets.SECRETKEY }}
         with:
           # Run our `coverage` script in our `package.json`
           coverageCommand: npm run coverage
