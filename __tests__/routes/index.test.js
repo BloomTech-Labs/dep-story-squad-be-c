@@ -6,19 +6,16 @@ describe('index router endpoints', () => {
   beforeAll(() => {});
 
   it('should use the test environment', () => {
-    console.log(process.env.NODE_ENV);
+    console.log(process.env.NODE_ENV)
     expect(process.env.NODE_ENV).toBe('test');
   });
 
   describe('GET /', () => {
-    it('should return json with api:up', () => {
-      request(server)
-        .get('/')
-        .then((res) => {
-          expect(res.status).toBe(200);
-          expect(res.body.api).toBe('up');
-        })
-        .catch((err) => console.log(err));
+    it('should return json with api:up', async () => {
+      const res = await request(server).get('/');
+
+      expect(res.status).toBe(200);
+      expect(res.body.api).toBe('up');
     });
   });
 });
