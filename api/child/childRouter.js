@@ -143,7 +143,7 @@ router.post('/:id/mission/write', checkToken, async function (req, res) {
         await submissions.map((obj) => {
           Child.addWriting(obj)
             .then((response) => {
-              //console.log(response);
+              console.log(response);
             })
             .catch((err) => {
               res.json({
