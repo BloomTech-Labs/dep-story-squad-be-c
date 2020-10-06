@@ -65,7 +65,6 @@ router.post('/:id', authRequired, function (req, res) {
 //get current mission endpoint
 //check the token
 router.get('/:id/mission', checkToken, checkProgress, function (req, res) {
-  if (req.decodedToken.sub == req.params.id) {
     Child.findById(req.params.id)
       .then((child) => {
         Child.getCurrentMission(child.current_mission)
@@ -87,11 +86,7 @@ router.get('/:id/mission', checkToken, checkProgress, function (req, res) {
           error: err,
         });
       });
-  } else {
-    res.status(400).json({
-      message: 'The ID provided is not associated with the token provided',
-    });
-  }
+  
 });
 
 //post writting submission
