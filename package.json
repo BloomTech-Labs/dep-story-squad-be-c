@@ -18,16 +18,21 @@
     "coverage": "CI=true npx jest --coverage --detectOpenHandles --forceExit"
   },
   "jest": {
-    "testEnvironment": "node",
-    "collectCoverageFrom": [
-      "**/*.js",
-      "!**/node_modules/**",
-      "!**/vendor/**",
-      "!**/__tests__/**",
-      "!**/coverage/**",
-      "!**/apidoc/**"
-    ]
-  },
+		"testEnvironment": "node",
+		"coverageReporters": [
+			"json-summary",
+			"text",
+			"lcov"
+		],
+		"coveragePathIgnorePatterns": [
+			"/node_modules/",
+			"/__tests__/",
+			"/coverage/",
+			"/public/",
+			"/database/",
+			"/.github/"
+		]
+	},
   "nodemonConfig": {
     "exec": "npm run start",
     "watch": [
