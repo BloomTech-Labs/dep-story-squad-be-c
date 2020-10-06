@@ -88,8 +88,8 @@ describe('Child router endpoints', () => {
     Child.addWriting.mockResolvedValue({});
     return request(server)
       .post('/child/1/mission/write')
-      .attach('images', '__tests__/surprised.jpg')
-      .attach('images', '__tests__/surprised.jpg')
+      .attach('image', '__tests__/surprised.jpg')
+      .attach('image', '__tests__/surprised.jpg')
       .then((res) => {
         expect(res.status).toBe(200);
       });
