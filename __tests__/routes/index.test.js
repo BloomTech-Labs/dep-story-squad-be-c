@@ -15,7 +15,7 @@ describe('index router endpoints', () => {
       request(server).get('/').then(res => {
         expect(res.status).toBe(200);
         expect(res.body.api).toBe('up');
-      })
+      }).catch(err => console.log(err))
     });
   });
 });
