@@ -65,6 +65,7 @@ describe('Child router endpoints', () => {
     it('should return 200', async () => {
       Child.findById.mockResolvedValue(child);
       const res = await request(server).post('/child/1').send({ pin: '1234' });
+      console.log(res.data);
       console.log(child);
       expect(res.status).toBe(200);
     });
