@@ -66,7 +66,7 @@ Returns:
 
 ## - Login to Parent Account
 
-> #### Get parent/:parentID
+> #### Get /parent/:parentID
 
 ```
 Expects:
@@ -126,7 +126,7 @@ Returns:
 
 ## - Add a new Child
 
-> #### Post parent/:parentID
+> #### Post /parent/:parentID
 
 ```
 Expects:
@@ -206,7 +206,7 @@ Returns:
 
 ## - post a new writing submission
 
-> #### POST /api/child/:childID/mission/write
+> #### POST /child/:childID/mission/write
 > > #### Note: the body will need to be form data not JSON
 
 ```
@@ -214,7 +214,7 @@ Expects:
     header: {
         authorization: bearer <JWT token>
     }
-        images: <writing png's>,
+        image: <writing png's>,
 
 ```
 
@@ -228,7 +228,7 @@ Returns:
 
 ## - post a new drawing submission
 
-> #### POST /api/child/:childID/mission/write
+> #### POST /child/:childID/mission/draw
 > > #### Note: the body will need to be for data not JSON
 
 ```
@@ -236,7 +236,7 @@ Expects:
     header: {
         authorization: bearer <JWT token>
     }
-        image: <writing png's>,
+        image: <writing png>,
 
 ```
 
