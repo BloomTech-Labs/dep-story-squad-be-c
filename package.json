@@ -15,7 +15,7 @@
     "format": "npx prettier --write \"**/*.+(js|json|yml|yaml|css|md)\"",
     "knex": "npx knex --knexfile config/knexfile.js",
     "tests": "npx jest --forceExit",
-    "coverage": "npx jest --coverage --detectOpenHandles --forceExit"
+    "coverage": "CI=true npx jest --coverage --detectOpenHandles --forceExit"
   },
   "jest": {
     "testEnvironment": "node",
