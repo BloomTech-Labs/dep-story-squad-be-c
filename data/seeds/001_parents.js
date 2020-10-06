@@ -11,12 +11,10 @@ exports.seed = function (knex) {
           name: faker.name.firstName(),
           email: 'llama001@maildrop.cc',
           pin: '1234',
-          subscription: 1,
+          subscription: true,
           admin: false,
         },
         //{name: faker.name.firstName(), email: 'llama002@maildrop.cc', pin: 1234, subscription: 1, admin: false},
-        //{name: faker.name.firstName(), email: 'llama003@maildrop.cc', pin: 1234, subscription: 1, admin: false},
-        //{name: faker.name.firstName(), email: 'llama004@maildrop.cc', pin: 1234, subscription: 1, admin: true}
       ]);
     });
 };

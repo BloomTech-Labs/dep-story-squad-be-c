@@ -26,8 +26,6 @@ exports.seed = function (knex) {
           username: faker.internet.userName(),
           parent_id: '00ulthapbErVUwVJy4x6',
         },
-        //{name: faker.name.firstName(), writing_score: 75, avatar_url: 'https://www.uokpl.rs/fpng/d/12-129858_kid-superhero-clipart.png', pin: 1234, username: faker.internet.userName(), parent_id: 2},
-        //{name: faker.name.firstName(), writing_score: 75, avatar_url: 'https://www.uokpl.rs/fpng/d/12-129858_kid-superhero-clipart.png', pin: 1234, username: faker.internet.userName(), parent_id: 3}
-      ]);
+        ]);
     });
 };

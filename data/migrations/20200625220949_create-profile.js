@@ -54,6 +54,25 @@ exports.up = (knex) => {
         .onUpdate('CASCADE')
         .onDelete('CASCADE');
     })
+    .createTable('Mission_Progress', function (table){
+      table.increments('id');
+      table.integer('child_id')
+        .notNullable()
+        .unsigned()
+        .references('Child.id')
+        .onUpdate('CASCADE')
+        .onDelete('CASCADE');
+      table.integer('mission_id')
+        .notNullable()
+        .unsigned()
+        .defaultTo(1)
+        .references('Missions.id')
+        .onUpdate('CASCADE')
+        .onDelete('CASCADE');
+      table.boolean('read').notNullable().defaultTo(0);
+      table.boolean('write').notNullable().defaultTo(0);
+      table.boolean('draw').notNullable().defaultTo(0);
+    })
     .createTable('Writing_Responses', function (table) {
       table.increments('id');
       table.string('file_path').notNullable();
@@ -99,6 +118,7 @@ exports.down = (knex) => {
   return knex.schema
     .dropTableIfExists('Drawing_Responses')
     .dropTableIfExists('Writing_Responses')
+    .dropTableIfExists('Mission_Progress')
     .dropTableIfExists('Child')
     .dropTableIfExists('Story')
     .dropTableIfExists('Missions')

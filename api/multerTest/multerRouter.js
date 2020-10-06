@@ -30,7 +30,7 @@ router.post('/multi-image-upload-test', async (req, res) => {
       });
     } else {
       if (req.files === undefined || req.files.length < 1) {
-        return res.json({ message: 'file undefined' });
+        return res.status(500).json({ message: 'file undefined' });
       } else {
         const fileArray = req.files;
         let fileLocation = '';

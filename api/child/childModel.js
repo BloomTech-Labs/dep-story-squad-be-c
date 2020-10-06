@@ -92,6 +92,46 @@ const getArchive = async (id) => {
   return db('Writing_Responses').where({ child_id: id }).select('*');
 };
 
+const getMissionProgress = async (id) =>{
+  return db('Mission_Progress').where({child_id: id}).first().select('*');
+}
+
+const createMissionProgress = async (id) =>{
+  return db('Mission_Progress').insert({child_id: id}).returning('*');
+}
+
+//moves a child to the next mission and resets their mission progress
+const nextMission = async (child_id, mission_id) =>{
+  const updatedChildObject = await db('Child').where({id: child_id}).first().update({current_mission: mission_id + 1}).returning('*');
+  const updatedMissionProgress = await db('Mission_Progress').where({child_id}).first().update({
+    mission_id: mission_id,
+    read: false,
+    write: false,
+    draw: false
+  })
+  return {
+    child: {
+      id: updatedChildObject.id,
+      name: updatedChildObject.name, 
+      username: updatedChildObject, 
+      current_mission: updatedChildObject.current_mission, 
+      avatar_url: updatedChildObject.avatar_url,
+      mission_progress: {
+        read: updatedMissionProgress.read,
+        write: updatedMissionProgress.write,
+        draw: updatedMissionProgress.draw
+      }
+    }
+  }
+}
+
+//toggle the read write or draw collumn to true in the mission progress table
+const updateProgress = async (child_id, field) =>{
+  const change = {};
+  change[field] = true;
+  return db('Mission_Progress').where({child_id}).first().update(change).returning('read, write, draw');
+}
+
 module.exports = {
   findAll,
   findBy,
@@ -106,4 +146,8 @@ module.exports = {
   addWriting,
   getArchive,
   getChildData,
+  getMissionProgress, 
+  createMissionProgress,
+  nextMission,
+  updateProgress
 };
