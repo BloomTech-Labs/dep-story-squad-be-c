@@ -52,6 +52,7 @@ app.use(cookieParser());
 
 // application routes
 app.use('/', indexRouter);
+app.use(['/profile', '/profiles'], profileRouter);
 app.use('/auth', authRouter);
 app.use('/parent', parentRouter);
 app.use('/child', childRouter);
