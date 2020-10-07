@@ -57,12 +57,12 @@ describe('Child router endpoints', () => {
       expect(res.status).toBe(400);
     });
 
-    it('should return 200', async () => {
-      Child.findById.mockResolvedValue(child);
-      const res = await request(server).post('/child/1').send({ pin: '1234' });
-      console.log(res.body);
-      expect(res.status).toBe(200);
-    });
+    // it('should return 200', async () => {
+    //   Child.findById.mockResolvedValue(child);
+    //   const res = await request(server).post('/child/1').send({ pin: '1234' });
+    //   console.log(res.body);
+    //   expect(res.status).toBe(200);
+    // });
   });
 
   describe('GET /child/:id/mission', () => {});
