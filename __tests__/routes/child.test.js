@@ -1,6 +1,5 @@
 const request = require('supertest');
 const Child = require('../../api/child/childModel');
-const childRouter = require('../../api/child/childRouter');
 const server = require('../../api/app.js');
 
 jest.mock('../../api/child/childModel');
