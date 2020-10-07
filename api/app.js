@@ -18,7 +18,6 @@ const swaggerUIOptions = {
   explorer: true,
 };
 
-
 //###[  Routers ]###
 const indexRouter = require('./index/indexRouter');
 const authRouter = require('./auth/authRouter');
