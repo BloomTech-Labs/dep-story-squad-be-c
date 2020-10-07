@@ -22,9 +22,11 @@ const swaggerUIOptions = {
 //###[  Routers ]###
 const indexRouter = require('./index/indexRouter');
 const authRouter = require('./auth/authRouter');
+const profileRouter = require('./profile/profileRouter');
 const parentRouter = require('./parent/parentRouter');
 const childRouter = require('./child/childRouter');
 const multerRouter = require('./multerTest/multerRouter');
+const dsRouter = require('./dsService/dsRouter');
 
 const app = express();
 
