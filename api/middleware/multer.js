@@ -3,12 +3,12 @@ const multer = require('multer'); // "^1.3.0"
 const multerS3 = require('multer-s3'); //"^2.7.0"
 
 const s3 = new aws.S3({
-  secretAccessKey: process.env.secretKey,
-  accessKeyId: process.env.accessKeyID,
+  secretAccessKey: process.env.SECRETKEY,
+  accessKeyId: process.env.ACCESSKEYID,
 });
 aws.config.update({
-  secretAccessKey: process.env.secretKey,
-  accessKeyId: process.env.accessKeyID,
+  secretAccessKey: process.env.SECRETKEY,
+  accessKeyId: process.env.ACCESSKEYID,
   region: 'us-east-1',
 });
 

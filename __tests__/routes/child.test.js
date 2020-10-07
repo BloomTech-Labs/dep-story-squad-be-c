@@ -1,9 +1,7 @@
 const request = require('supertest');
-const express = require('express');
 const Child = require('../../api/child/childModel');
 const childRouter = require('../../api/child/childRouter');
-const server = express();
-server.use(express.json());
+const server = require('../../api/app.js')
 
 jest.mock('../../api/child/childModel');
 
@@ -22,11 +20,6 @@ describe('Test Suite', () => {
 });
 
 describe('Child router endpoints', () => {
-  beforeAll(() => {
-    server.use('/child', childRouter);
-    jest.clearAllMocks();
-  });
-
   const child = {
     id: 1,
     name: 'Billy',
@@ -41,68 +34,54 @@ describe('Child router endpoints', () => {
   };
 
   describe('POST /child/:id', () => {
-    it('should return 400 when nothing is sent', () => {
+    it('should return 400 when nothing is sent', async () => {
       Child.findById.mockResolvedValue(child);
-      return request(server)
-        .post('/child/1')
-        .send({})
-        .then((res) => {
-          expect(res.status).toBe(400);
-        });
+      const res = await request(server).post('/child/1').send({});
+
+      expect(res.status).toBe(400);
     });
 
-    it('should return 400 if no child sent', () => {
+    it('should return 400 if no child sent', async () => {
       Child.findById.mockResolvedValue(null);
-      return request(server)
-        .post('/child/1')
-        .send({ pin: '1234' })
-        .then((res) => {
-          expect(res.status).toBe(400);
-        });
+      const res = await request(server).post('/child/1').send({ pin: '1234' });
+
+      expect(res.status).toBe(400);
     });
 
-    it('should return 400 if wrong pin', () => {
+    it('should return 400 if wrong pin', async () => {
       Child.findById.mockResolvedValue(child);
-      return request(server)
-        .post('/child/1')
-        .send({ pin: '1235' })
-        .then((res) => {
-          expect(res.status).toBe(400);
-        });
+      const res = await request(server).post('/child/1').send({ pin: '1235' });
+
+      expect(res.status).toBe(400);
     });
 
-    it('should return 200', () => {
+    it('should return 200', async () => {
       Child.findById.mockResolvedValue(child);
-      return request(server)
-        .post('/child/1')
-        .send({ pin: '1234' })
-        .then((res) => {
-          console.log(child);
-          expect(res.status).toBe(200);
-        });
+      const res = await request(server).post('/child/1').send({ pin: '1234' });
+      console.log(res)
+      console.log(child);
+      expect(res.status).toBe(200);
     });
   });
 
-  it('should allow multiple file uploads', () => {
+  describe('GET /child/:id/mission', () => {});
+
+  it('should allow multiple file uploads', async () => {
     Child.findById.mockResolvedValue(child);
     Child.addWriting.mockResolvedValue({});
-    return request(server)
+    const res = await request(server)
       .post('/child/1/mission/write')
-      .attach('images', '__tests__/surprised.jpg')
-      .attach('images', '__tests__/surprised.jpg')
-      .then((res) => {
-        expect(res.status).toBe(200);
-      });
+      .attach('image', '__tests__/surprised.jpg')
+      .attach('image', '__tests__/surprised.jpg');
+    expect(res.status).toBe(200);
   });
 
-  it('should allow fingle file uploads', () => {
+  it('should allow fingle file uploads', async () => {
     Child.findById.mockResolvedValue(child);
     Child.addWriting.mockResolvedValue({});
-    return request(server)
+    const res = await request(server)
       .post('/child/1/mission/draw')
-      .attach('image', '__tests__/surprised.jpg')
-      .then((res) => {
-        expect(res.status).toBe(200);
-      });
+      .attach('image', '__tests__/surprised.jpg');
+    expect(res.status).toBe(200);
   });
 });
