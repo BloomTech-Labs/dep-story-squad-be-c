@@ -1,7 +1,7 @@
 const request = require('supertest');
 const Child = require('../../api/child/childModel');
 const childRouter = require('../../api/child/childRouter');
-const server = require('../../api/app.js')
+const server = require('../../api/app.js');
 
 jest.mock('../../api/child/childModel');
 
@@ -58,7 +58,7 @@ describe('Child router endpoints', () => {
     it('should return 200', async () => {
       Child.findById.mockResolvedValue(child);
       const res = await request(server).post('/child/1').send({ pin: '1234' });
-      console.log(res)
+      console.log(res);
       console.log(child);
       expect(res.status).toBe(200);
     });
