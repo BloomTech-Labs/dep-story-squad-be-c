@@ -1,9 +1,7 @@
 const request = require('supertest');
-const express = require('express');
 const Profiles = require('../../api/profile/profileModel.js');
 const profileRouter = require('../../api/profile/profileRouter.js');
-const server = express();
-server.use(express.json());
+const server = require('../../api/app.js');
 
 jest.mock('../../api/profile/profileModel.js');
 // mock the auth middleware completely

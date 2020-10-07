@@ -1,9 +1,7 @@
 const request = require('supertest');
-const express = require('express');
 const Parents = require('../../api/parent/parentModel.js');
 const parentRouter = require('../../api/parent/parentRouter.js');
-const server = express();
-server.use(express.json());
+const server = require('../../api/app.js');
 
 jest.mock('../../api/parent/parentModel.js');
 

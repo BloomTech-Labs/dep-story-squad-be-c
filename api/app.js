@@ -4,20 +4,20 @@ const cors = require('cors');
 const cookieParser = require('cookie-parser');
 const logger = require('morgan');
 const helmet = require('helmet');
-//const swaggerUi = require('swagger-ui-express');
-//const swaggerJSDoc = require('swagger-jsdoc');
-//const jsdocConfig = require('../config/jsdoc');
+const swaggerUi = require('swagger-ui-express');
+const swaggerJSDoc = require('swagger-jsdoc');
+const jsdocConfig = require('../config/jsdoc');
 const dotenv = require('dotenv');
 const config_result = dotenv.config();
 if (process.env.NODE_ENV != 'production' && config_result.error) {
   throw config_result.error;
 }
-/*
+
 const swaggerSpec = swaggerJSDoc(jsdocConfig);
 const swaggerUIOptions = {
   explorer: true,
 };
-*/
+
 
 //###[  Routers ]###
 const indexRouter = require('./index/indexRouter');
@@ -33,11 +33,11 @@ process.on('unhandledRejection', (reason, p) => {
   // application specific logging, throwing an error, or other logic here
 });
 // docs would need to be built and committed
-/*app.use(
+app.use(
   '/api-docs',
   swaggerUi.serve,
   swaggerUi.setup(swaggerSpec, swaggerUIOptions)
-);*/
+);
 
 app.use(helmet());
 app.use(express.json());
@@ -52,10 +52,12 @@ app.use(cookieParser());
 
 // application routes
 app.use('/', indexRouter);
+app.use(['/profile', '/profiles'], profileRouter);
 app.use('/auth', authRouter);
 app.use('/parent', parentRouter);
 app.use('/child', childRouter);
 app.use('/multer', multerRouter);
+app.use('/data', dsRouter);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
