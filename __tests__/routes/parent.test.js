@@ -1,6 +1,5 @@
 const request = require('supertest');
 const Parents = require('../../api/parent/parentModel.js');
-const parentRouter = require('../../api/parent/parentRouter.js');
 const server = require('../../api/app.js');
 
 jest.mock('../../api/parent/parentModel.js');
@@ -20,9 +19,7 @@ describe('testing the testing', () => {
 });
 
 describe('profiles router endpoints', () => {
-  beforeAll(() => {
-    // This is the module/route being tested
-    server.use('/parent', parentRouter);
+  beforeEach(() => {
     jest.clearAllMocks();
   });
 

@@ -19,7 +19,7 @@ describe('Test Suite', () => {
 });
 
 describe('Child router endpoints', () => {
-  beforeAll(() => {
+  beforeEach(() => {
     jest.clearAllMocks();
   });
 
@@ -45,8 +45,7 @@ describe('Child router endpoints', () => {
     });
 
     it('should return 400 if no child sent', async () => {
-      Child.findById.mockResolvedValue(null);
-      const res = await request(server).post('/child/1').send({ pin: '1234' });
+      const res = await request(server).post('/child/1').send({ pin: '' });
 
       expect(res.status).toBe(400);
     });
@@ -61,8 +60,7 @@ describe('Child router endpoints', () => {
     it('should return 200', async () => {
       Child.findById.mockResolvedValue(child);
       const res = await request(server).post('/child/1').send({ pin: '1234' });
-      console.log(res.data);
-      console.log(child);
+      console.log(res.body);
       expect(res.status).toBe(200);
     });
   });
