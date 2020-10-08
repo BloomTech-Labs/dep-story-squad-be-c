@@ -1,6 +1,6 @@
 const request = require('supertest');
 const Child = require('../../api/child/childModel');
-const childRouter = require('../../api/child/childRouter.js')
+const childRouter = require('../../api/child/childRouter.js');
 const server = require('../../api/app.js');
 
 jest.mock('../../api/child/childModel');
@@ -34,7 +34,7 @@ describe('Child router endpoints', () => {
 
   describe('GET /child', () => {
     it('should return children and code 200', async () => {
-      Child.findAll.mockResolvedValue([])
+      Child.findAll.mockResolvedValue([]);
       const res = await request(server).get('/child');
       expect(res.status).toBe(200);
       expect(Child.findAll.mock.calls.length).toBe(1);
@@ -71,8 +71,6 @@ describe('Child router endpoints', () => {
       expect(res.status).toBe(400);
     });
   });
-
-
 
   // it('should allow multiple file uploads', async () => {
   //   Child.findById.mockResolvedValue(child);
