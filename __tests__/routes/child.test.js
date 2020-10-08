@@ -19,19 +19,6 @@ describe('Child router endpoints', () => {
     jest.clearAllMocks();
   });
 
-  const child = {
-    id: 1,
-    name: 'Billy',
-    writing_score: 80,
-    avatar_url: null,
-    pin: '1234',
-    type: 'child',
-    username: 'BillyBob',
-    dyslexic: 0,
-    parent_id: 1,
-    current_mission: 1,
-  };
-
   describe('GET /child', () => {
     it('should return children and code 200', async () => {
       Child.findAll.mockResolvedValue([]);
@@ -42,7 +29,18 @@ describe('Child router endpoints', () => {
   });
 
   it('should return 200', async () => {
-    Child.findById.mockResolvedValue(child);
+    Child.findById.mockResolvedValue({
+      id: 1,
+      name: 'Billy',
+      writing_score: 80,
+      avatar_url: null,
+      pin: '1234',
+      type: 'child',
+      username: 'BillyBob',
+      dyslexic: 0,
+      parent_id: 1,
+      current_mission: 1,
+    });
     const res = await request(server).post('/child/1').send({ pin: '1234' });
     console.log(res.body);
     expect(res.status).toBe(200);
@@ -52,7 +50,7 @@ describe('Child router endpoints', () => {
 
   describe('POST /child/:id', () => {
     it('should return 400 when nothing is sent', async () => {
-      Child.findById.mockResolvedValue(child);
+      Child.findById.mockResolvedValue({});
       const res = await request(server).post('/child/1').send({});
 
       expect(res.status).toBe(400);
@@ -65,7 +63,18 @@ describe('Child router endpoints', () => {
     });
 
     it('should return 400 if wrong pin', async () => {
-      Child.findById.mockResolvedValue(child);
+      Child.findById.mockResolvedValue({
+        id: 1,
+        name: 'Billy',
+        writing_score: 80,
+        avatar_url: null,
+        pin: '1234',
+        type: 'child',
+        username: 'BillyBob',
+        dyslexic: 0,
+        parent_id: 1,
+        current_mission: 1,
+      });
       const res = await request(server).post('/child/1').send({ pin: '1235' });
 
       expect(res.status).toBe(400);

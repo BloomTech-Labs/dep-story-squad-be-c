@@ -35,9 +35,10 @@ router.get('/', function (req, res) {
 
 //login endpoint for child
 router.post('/:id', authRequired, function (req, res) {
+  const id = String(req.params.id);
   if (req.body.pin) {
     //retrieve the parent from the db
-    Child.findById(req.params.id)
+    Child.findById(id)
       .then((child) => {
         //check the pin
         console.log(child);
