@@ -22,14 +22,35 @@ function createToken(user) {
   return jwt.sign(payload, secret, options);
 }
 
+router.get('/', function (req, res) {
+  Child.findAll()
+    .then((children) => {
+      console.log(children);
+      res.status(200).json(children);
+    })
+    .catch((err) => {
+      console.log(err);
+      res.status(400).json({ message: err.essage });
+    });
+});
+
 //login endpoint for child
+<<<<<<< HEAD
 router.post('/:id', authRequired, function (req, res) {
+=======
+
+router.post('/:id', authRequired, checkProgress, function (req, res) {
+  const id = String(req.params.id);
+>>>>>>> 7066e5c6a924de9b88ac05acdbe5988eac5a9350
   if (req.body.pin) {
     //retrieve the parent from the db
-    Child.findById(req.params.id)
+    Child.findById(id)
       .then((child) => {
         //check the pin
         console.log(child);
+        console.log(req.body);
+        console.log(child.pin === req.body.pin);
+        console.log(createToken(child));
         if (child.pin === req.body.pin) {
           //if the pin is correct make a token and get the dashboard data
           const token = createToken(child);
