@@ -13,6 +13,17 @@ jest.mock('../../api/middleware/jwtRestricted', () =>
   jest.fn((req, res, next) => next())
 );
 
+
+jest.mock('../../api/middleware/checkProgress', () =>
+  jest.fn((req, res, next) => next())
+);
+
+describe('Test Suite', () => {
+  it('tests if jest is working', () => {
+    expect(3).toBe(3);
+  });
+});
+
 describe('Child router endpoints', () => {
   beforeAll(() => {
     server.use('/child', childRouter);

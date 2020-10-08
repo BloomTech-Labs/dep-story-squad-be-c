@@ -1,7 +1,7 @@
 const createError = require('http-errors');
 const OktaJwtVerifier = require('@okta/jwt-verifier');
 const oktaVerifierConfig = require('../../config/okta');
-const Profiles = require('../profile/profileModel');
+const Parent = require('../parent/parentModel');
 const oktaJwtVerifier = new OktaJwtVerifier(oktaVerifierConfig.config);
 
 const makeParentObj = (claims) => {
@@ -30,12 +30,12 @@ const authRequired = async (req, res, next) => {
       .then(async (data) => {
         const jwtUserObj = makeParentObj(data.claims);
         console.log(data, 'object');
-        const profile = await Profiles.findById(jwtUserObj.id);
+        const profile = await Parent.findById(jwtUserObj.id);
         //res.status(200).json({'message': jwtUserObj});
         if (profile) {
           req.profile = profile;
         } else if (jwtUserObj.id && jwtUserObj.name && jwtUserObj.email) {
-          req.newProfile = jwtUserObj;
+          req.profile = jwtUserObj;
         } else {
           throw new Error('unable to process id token');
         }
