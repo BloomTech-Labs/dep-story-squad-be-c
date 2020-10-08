@@ -21,6 +21,18 @@ function createToken(user) {
   return jwt.sign(payload, secret, options);
 }
 
+router.get('/', function (req, res) {
+  Child.findAll()
+    .then((children) => {
+      console.log(children);
+      res.status(200).json(children);
+    })
+    .catch((err) => {
+      console.log(err);
+      res.status(400).json({ message: err.essage });
+    });
+});
+
 //login endpoint for child
 router.post('/:id', authRequired, function (req, res) {
   if (req.body.pin) {
