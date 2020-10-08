@@ -46,6 +46,7 @@ jobs:
           OKTA_CLIENT_ID: ${{ secrets.OKTA_CLIENT_ID }}
           ACCESSKEYID: ${{ secrets.ACCESSKEYID }}
           SECRETKEY: ${{ secrets.SECRETKEY }}
+          JWTSECRET: ${{ secrets.JWTSECRET}}
         with:
           # Run our `coverage` script in our `package.json`
           coverageCommand: npm run coverage
