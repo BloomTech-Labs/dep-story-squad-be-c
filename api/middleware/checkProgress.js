@@ -2,7 +2,7 @@ const Child = require('../child/childModel');
 
 module.exports = (req, res, next) => {
   Child.getMissionProgress(req.params.id).then((progress) => {
-    console.log(progress)
+    console.log(progress);
     if (progress) {
       next();
     } else {
