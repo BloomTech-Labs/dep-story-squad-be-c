@@ -13,7 +13,6 @@ jest.mock('../../api/middleware/jwtRestricted', () =>
   jest.fn((req, res, next) => next())
 );
 
-
 jest.mock('../../api/middleware/checkProgress', () =>
   jest.fn((req, res, next) => next())
 );
