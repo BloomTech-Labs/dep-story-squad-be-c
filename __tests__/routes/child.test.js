@@ -51,8 +51,18 @@ describe('Child router endpoints', () => {
       parent_id: 1,
       current_mission: 1,
     });
+    Child.createMissionProgress.mockResolvedValue({
+      read: false,
+      write: false,
+      draw: false,
+    });
+    Child.getMissionProgress.mockResolvedValue({
+      read: false,
+      write: false,
+      draw: false,
+    });
     const res = await request(server).post('/child/1').send({ pin: '1234' });
-    console.log(res.body);
+    console.log(res.body, 'test body');
     expect(res.status).toBe(200);
     expect(res.body.child.name).toBe('Billy');
     expect(Child.findAll.mock.calls.length).toBe(1);
