@@ -12,6 +12,10 @@ jest.mock('../../api/middleware/jwtRestricted', () =>
   jest.fn((req, res, next) => next())
 );
 
+jest.mock('../../api/middleware/authRequired', () =>
+  jest.fn((req,res,next) => next())
+);
+
 describe('Test Suite', () => {
   it('tests if jest is working', () => {
     expect(3).toBe(3);
