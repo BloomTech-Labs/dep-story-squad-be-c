@@ -42,6 +42,9 @@ router.post('/:id', authRequired, function (req, res) {
       .then((child) => {
         //check the pin
         console.log(child);
+        console.log(req.body);
+        console.log(child.pin === req.body.pin)
+        console.log(createToken(child))
         if (child.pin === req.body.pin) {
           //if the pin is correct make a token and get the dashboard data
           const token = createToken(child);
