@@ -2,13 +2,14 @@ const Child = require('../child/childModel');
 
 module.exports = (req, res, next) => {
   Child.getMissionProgress(req.params.id).then((progress) => {
-    if (progress.id) {
+    console.log(progress)
+    if (progress) {
       next();
     } else {
       Child.createMissionProgress(req.params.id)
         .then((response) => {
           console.log(response);
-          if (response.read) {
+          if (response) {
             next();
           } else {
             res.status(500).json({
