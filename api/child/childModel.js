@@ -4,8 +4,8 @@ const findAll = async () => {
   return await db('Child');
 };
 
-const findBy = (filter) => {
-  return db('Child').where(filter);
+const findBy = async (filter) => {
+  return await db('Child').where(filter);
 };
 
 const findById = async (id) => {
@@ -23,9 +23,9 @@ const create = async (profile) => {
   return db('Child').insert(profile).returning('*');
 };
 
-const update = (id, changes) => {
+const update = async (id, changes) => {
   console.log(changes);
-  return db('profiles')
+  return await db('profiles')
     .where({ id: id })
     .first()
     .update(changes)

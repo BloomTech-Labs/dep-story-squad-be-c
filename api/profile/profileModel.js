@@ -9,11 +9,11 @@ const findBy = (filter) => {
 };
 
 const findById = async (id) => {
-  return db('Parent').where({ id }).first().select('*');
+  return db('profiles').where({ id }).first().select('*');
 };
 
 const create = async (profile) => {
-  return db('Parent').insert(profile).returning('*');
+  return db('profiles').insert(profile).returning('*');
 };
 
 const update = (id, profile) => {
