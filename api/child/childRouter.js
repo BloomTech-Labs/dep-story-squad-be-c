@@ -3,6 +3,7 @@ const authRequired = require('../middleware/authRequired');
 const Child = require('./childModel');
 const router = express.Router();
 const jwt = require('jsonwebtoken');
+const checkProgress = require('../middleware/checkProgress');
 const upload = require('../middleware/multer');
 const multiUpload = upload.array('image', 5);
 const singleUpload = upload.single('image');
@@ -63,34 +64,28 @@ router.post('/:id', authRequired, function (req, res) {
 
 //get current mission endpoint
 //check the token
-router.get('/:id/mission', checkToken, function (req, res) {
-  if (req.decodedToken.sub == req.params.id) {
-    Child.findById(req.params.id)
-      .then((child) => {
-        Child.getCurrentMission(child.current_mission)
-          .then((mission) => {
-            res.status(200).json({
-              ...mission,
-            });
-          })
-          .catch((err) => {
-            res.status(500).json({
-              message: 'error retrieving mission',
-              error: err,
-            });
+router.get('/:id/mission', checkToken, checkProgress, function (req, res) {
+  Child.findById(req.params.id)
+    .then((child) => {
+      Child.getCurrentMission(child.current_mission)
+        .then((mission) => {
+          res.status(200).json({
+            ...mission,
           });
-      })
-      .catch((err) => {
-        res.status(500).json({
-          message: 'error retrieving child data',
-          error: err,
+        })
+        .catch((err) => {
+          res.status(500).json({
+            message: 'error retrieving mission',
+            error: err,
+          });
         });
+    })
+    .catch((err) => {
+      res.status(500).json({
+        message: 'error retrieving child data',
+        error: err,
       });
-  } else {
-    res.status(400).json({
-      message: 'The ID provided is not associated with the token provided',
     });
-  }
 });
 
 //post writting submission
@@ -105,7 +100,6 @@ router.post('/:id/mission/write', checkToken, async function (req, res) {
   //we send our files to an AWS bucket
   //we get back an array of urls for the uploaded files
   multiUpload(req, res, async function (err) {
-    //console.log('files', req.files);
     if (err) {
       return res.status(500).json({
         status: 'fail',
@@ -163,7 +157,6 @@ router.post('/:id/mission/draw', checkToken, async function (req, res) {
   let child = await Child.findById(req.params.id);
 
   singleUpload(req, res, async function (err) {
-    //console.log('files', req.files);
     if (err) {
       return res.status(500).json({
         status: 'fail',
@@ -194,18 +187,15 @@ router.post('/:id/mission/draw', checkToken, async function (req, res) {
 });
 
 //get past submissions
-router.get(
-  '/:id/archive',
-  /*checkToken,*/ function (req, res) {
-    Child.getArchive(req.params.id)
-      .then((submissions) => {
-        res.json({ submissions });
-      })
-      .catch((err) => {
-        res.json({ err });
-      });
-  }
-);
+router.get('/:id/archive', checkToken, function (req, res) {
+  Child.getArchive(req.params.id)
+    .then((submissions) => {
+      res.json({ submissions });
+    })
+    .catch((err) => {
+      res.json({ err });
+    });
+});
 
 const mockDSCall = function () {
   return {

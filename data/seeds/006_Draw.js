@@ -24,15 +24,6 @@ exports.seed = function (knex) {
           child_id: 1,
           mission_id: 3,
         },
-        //{file_path: faker.image.imageUrl(), flagged: false, child_id: 2, mission_id: 1},
-        //{file_path: faker.image.imageUrl(), flagged: false, child_id: 2, mission_id: 2},
-        //{file_path: faker.image.imageUrl(), flagged: false, child_id: 2, mission_id: 3},
-        //{file_path: faker.image.imageUrl(), flagged: false, child_id: 3, mission_id: 1},
-        //{file_path: faker.image.imageUrl(), flagged: false, child_id: 3, mission_id: 2},
-        //{file_path: faker.image.imageUrl(), flagged: false, child_id: 3, mission_id: 3},
-        //{file_path: faker.image.imageUrl(), flagged: false, child_id: 4, mission_id: 1},
-        //{file_path: faker.image.imageUrl(), flagged: false, child_id: 4, mission_id: 2},
-        //{file_path: faker.image.imageUrl(), flagged: false, child_id: 4, mission_id: 3},
       ]);
     });
 };
