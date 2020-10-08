@@ -64,7 +64,7 @@ router.post('/:id', authRequired, function (req, res) {
 
 //get current mission endpoint
 //check the token
-router.get('/:id/mission', checkToken, checkProgress, function (req, res) {
+router.get('/:id/mission', checkToken, function (req, res) {
   Child.findById(req.params.id)
     .then((child) => {
       Child.getCurrentMission(child.current_mission)
