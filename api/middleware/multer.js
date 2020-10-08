@@ -19,7 +19,6 @@ const upload = multer({
     bucket: 'storysquad-teamc-bucket',
     contentType: multerS3.AUTO_CONTENT_TYPE,
     key: function (req, file, cb) {
-      console.log(file, 'what multer sees');
       cb(
         null,
         'user-content/' + Date.now().toString() + `${file.originalname}`

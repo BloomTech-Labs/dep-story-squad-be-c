@@ -3,7 +3,7 @@ const authRequired = require('../middleware/authRequired');
 const Child = require('./childModel');
 const router = express.Router();
 const jwt = require('jsonwebtoken');
-// const checkProgress = require('../middleware/checkProgress');
+const checkProgress = require('../middleware/checkProgress');
 const upload = require('../middleware/multer');
 const multiUpload = upload.array('image', 5);
 const singleUpload = upload.single('image');
@@ -23,7 +23,7 @@ function createToken(user) {
 }
 
 //login endpoint for child
-router.post('/:id', authRequired, function (req, res) {
+router.post('/:id', authRequired, checkProgress, function (req, res) {
   if (req.body.pin) {
     //retrieve the parent from the db
     Child.findById(req.params.id)
@@ -95,6 +95,7 @@ router.get('/:id/mission', checkToken, function (req, res) {
 //add each of those post objects to the db
 
 router.post('/:id/mission/write', checkToken, async function (req, res) {
+  console.log(req, 'bodylog');
   let child = await Child.findById(req.params.id);
   //we run the images through this multer function
   //we send our files to an AWS bucket
