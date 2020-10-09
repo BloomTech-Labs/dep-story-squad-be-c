@@ -35,7 +35,7 @@ router.get('/', function (req, res) {
 });
 
 //login endpoint for child
-router.post('/:id', function (req, res) {
+router.post('/:id', authRequired, function (req, res) {
   const id = String(req.params.id);
   if (req.body.pin) {
     //retrieve the parent from the db
