@@ -98,7 +98,7 @@ describe('Child router endpoints', () => {
         read: true,
         write: false,
         draw: false,
-      })
+      });
       const res = await request(server).put('/child/1/mission/read');
       expect(res.status).toBe(200);
     });
@@ -107,7 +107,7 @@ describe('Child router endpoints', () => {
       Child.findById.mockResolvedValue(null);
       const res = await request(server).put('/child/1/mission/read');
       expect(res.status).toBe(404);
-    })
+    });
   });
 
   it('should allow multiple file uploads', async () => {
