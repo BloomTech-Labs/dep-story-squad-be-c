@@ -28,6 +28,18 @@ describe('Child router endpoints', () => {
     server.use('/child', childRouter);
     jest.clearAllMocks();
   });
+  const child = {
+    id: 1,
+    name: 'Billy',
+    writing_score: 80,
+    avatar_url: null,
+    pin: '1234',
+    type: 'child',
+    username: 'BillyBob',
+    dyslexic: 0,
+    parent_id: 1,
+    current_mission: 1,
+  };
 
   describe('GET /child', () => {
     it('should return children and code 200', async () => {
@@ -39,18 +51,7 @@ describe('Child router endpoints', () => {
   });
 
   it('should return 200', async () => {
-    Child.findById.mockResolvedValue({
-      id: 1,
-      name: 'Billy',
-      writing_score: 80,
-      avatar_url: null,
-      pin: '1234',
-      type: 'child',
-      username: 'BillyBob',
-      dyslexic: 0,
-      parent_id: 1,
-      current_mission: 1,
-    });
+    Child.findById.mockResolvedValue(child);
     Child.createMissionProgress.mockResolvedValue({
       read: false,
       write: false,
@@ -83,22 +84,30 @@ describe('Child router endpoints', () => {
     });
 
     it('should return 400 if wrong pin', async () => {
-      Child.findById.mockResolvedValue({
-        id: 1,
-        name: 'Billy',
-        writing_score: 80,
-        avatar_url: null,
-        pin: '1234',
-        type: 'child',
-        username: 'BillyBob',
-        dyslexic: 0,
-        parent_id: 1,
-        current_mission: 1,
-      });
+      Child.findById.mockResolvedValue(child);
       const res = await request(server).post('/child/1').send({ pin: '1235' });
 
       expect(res.status).toBe(400);
     });
+  });
+
+  describe('PUT child/:id/mission/read', () => {
+    it('should return 200 on success', async () => {
+      Child.findById.mockResolvedValue(child);
+      Child.updateProgress.mockResolvedValue({
+        read: true,
+        write: false,
+        draw: false,
+      })
+      const res = await request(server).put('/child/1/mission/read');
+      expect(res.status).toBe(200);
+    });
+
+    it('should return 404 if no child found', async () => {
+      Child.findById.mockResolvedValue(null);
+      const res = await request(server).put('/child/1/mission/read');
+      expect(res.status).toBe(404);
+    })
   });
 
   // it('should allow multiple file uploads', async () => {

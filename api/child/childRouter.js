@@ -35,17 +35,13 @@ router.get('/', function (req, res) {
 });
 
 //login endpoint for child
-router.post('/:id', authRequired, function (req, res) {
+router.post('/:id', function (req, res) {
   const id = String(req.params.id);
   if (req.body.pin) {
     //retrieve the parent from the db
     Child.findById(id)
       .then((child) => {
         //check the pin
-        console.log(child);
-        console.log(req.body);
-        console.log(child.pin === req.body.pin);
-        console.log(createToken(child));
         if (child.pin === req.body.pin) {
           //if the pin is correct make a token and get the dashboard data
           const token = createToken(child);
@@ -154,6 +150,26 @@ router.get('/:id/mission', checkToken, function (req, res) {
     });
 });
 
+router.put('/:id/mission/read', (req, res) => {
+  Child.findById(req.params.id)
+    .then((child) => {
+      if (child) {
+        Child.updateProgress(child.id, 'read')
+          .then((resp) => {
+            res.status(200).json({ progress: resp[0] });
+          })
+          .catch((err) => {
+            res.status(500).json({ message: 'There was an error', error: err });
+          });
+      } else {
+        res.status(404).json({ message: 'Child not found.' });
+      }
+    })
+    .catch((err) => {
+      res.status(500).json({ message: 'There was an error', error: err });
+    });
+});
+
 //post writting submission
 //use the multer function to send to the aws bucket and get the url's back
 //send each of those url's to the ds endpoint to get scores and flags back
@@ -203,7 +219,7 @@ router.post('/:id/mission/write', checkToken, async function (req, res) {
         await submissions.map((obj) => {
           Child.addWriting(obj)
             .then((response) => {
-              console.log(response);
+              console.log(response.body);
             })
             .catch((err) => {
               res.json({
@@ -212,8 +228,10 @@ router.post('/:id/mission/write', checkToken, async function (req, res) {
             });
         });
         //if an error wasn't thrown that means that we've successfully submitted!
+        const mission = await Child.updateProgress(req.params.id, 'write');
         res.status(200).json({
           message: 'we got your submission!',
+          progress: mission[0],
         });
       }
     }
@@ -247,7 +265,10 @@ router.post('/:id/mission/draw', checkToken, async function (req, res) {
           .catch((err) => {
             res.json({ error: err });
           });
-        res.status(200).json({ message: 'we got your submission!' });
+        const mission = await Child.updateProgress(req.params.id, 'draw');
+        res
+          .status(200)
+          .json({ message: 'we got your submission!', progress: mission[0] });
       }
     }
   });
