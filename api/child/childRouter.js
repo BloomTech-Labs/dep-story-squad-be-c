@@ -30,7 +30,7 @@ router.get('/', function (req, res) {
     })
     .catch((err) => {
       console.log(err);
-      res.status(400).json({ message: err.essage });
+      res.status(500).json({ message: err.essage });
     });
 });
 
@@ -131,9 +131,13 @@ router.get('/:id/mission', checkToken, function (req, res) {
     .then((child) => {
       Child.getCurrentMission(child.current_mission)
         .then((mission) => {
-          res.status(200).json({
-            ...mission,
-          });
+          if (mission) {
+            res.status(200).json({
+              ...mission,
+            });
+          } else {
+            res.status(404).json({ message: 'no mission found' });
+          }
         })
         .catch((err) => {
           res.status(500).json({
@@ -147,6 +151,26 @@ router.get('/:id/mission', checkToken, function (req, res) {
         message: 'error retrieving child data',
         error: err,
       });
+    });
+});
+
+router.get('/:id/progress', (req, res) => {
+  Child.findById(req.params.id)
+    .then((child) => {
+      if (child) {
+        Child.getMissionProgress(child.id)
+          .then((mission) => {
+            res.status(200).json({ progress: mission });
+          })
+          .catch((err) => {
+            res.status(500).json({ error: err });
+          });
+      } else {
+        res.status(404).json({ message: 'child not found' });
+      }
+    })
+    .catch((err) => {
+      res.status(500).json({ error: err });
     });
 });
 
