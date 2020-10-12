@@ -1,15 +1,13 @@
 # Story Squad API
 
-> ## website here 
+> ## website here
 
 # Auth
 
 > ## All the following routes require **`an okta token`** header
 
-
-
 # - Parent register and login routes
->
+
 > ### POST /auth/register
 
 ```
@@ -204,9 +202,30 @@ Returns:
 
 <br />
 
+## - update read progress
+
+> #### PUT /child/:childID/mission/read
+
+```
+Returns:
+    {
+        progress: {
+            "id": <int>,
+            "child_id": <int>,
+            "mission_id": <int>,
+            "read": <boolean>,
+            "write": <boolean>,
+            "draw": <boolean>
+        }
+    }
+```
+
+<br />
+
 ## - post a new writing submission
 
 > #### POST /child/:childID/mission/write
+>
 > > #### Note: the body will need to be form data not JSON
 
 ```
@@ -222,13 +241,23 @@ Expects:
 Returns:
     {
         message: "We got your submission!"
+        progress: {
+            "id": <int>,
+            "child_id": <int>,
+            "mission_id": <int>,
+            "read": <boolean>,
+            "write": <boolean>,
+            "draw": <boolean>
+        }
     }
 ```
+
 <br />
 
 ## - post a new drawing submission
 
 > #### POST /child/:childID/mission/draw
+>
 > > #### Note: the body will need to be for data not JSON
 
 ```
@@ -244,11 +273,17 @@ Expects:
 Returns:
     {
         message: "We got your submission!"
+        progress: {
+            "id": <int>,
+            "child_id": <int>,
+            "mission_id": <int>,
+            "read": <boolean>,
+            "write": <boolean>,
+            "draw": <boolean>
+        }
     }
 ```
+
 <br />
 
 # DS and Admin endpoints still need to be planned out
-
-
-

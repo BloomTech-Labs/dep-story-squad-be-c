@@ -97,7 +97,9 @@ const getMissionProgress = async (id) => {
 };
 
 const createMissionProgress = async (id) => {
-  return db('Mission_Progress').insert({ child_id: id }).returning('*');
+  return db('Mission_Progress')
+    .insert({ child_id: id, read: false, write: false, draw: false })
+    .returning('*');
 };
 
 //moves a child to the next mission and resets their mission progress
@@ -140,7 +142,7 @@ const updateProgress = async (child_id, field) => {
     .where({ child_id })
     .first()
     .update(change)
-    .returning('read, write, draw');
+    .returning('*');
 };
 
 module.exports = {
