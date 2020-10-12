@@ -91,6 +91,41 @@ describe('Child router endpoints', () => {
     });
   });
 
+  describe('GET child/:id/progress', () => {
+    it('should return 200 on success', async () => {
+      Child.findById.mockResolvedValue(child);
+      Child.getMissionProgress.mockResolvedValue({});
+      const res = await request(server).get('/child/1/progress');
+
+      expect(res.status).toBe(200);
+    });
+
+    it('should return 404 if no child returned', async () => {
+      Child.findById.mockResolvedValue(null);
+      const res = await request(server).get('/child/1/progress');
+
+      expect(res.status).toBe(404);
+    });
+  });
+
+  describe('GET child/:id/mission', () => {
+    it('should return 200 on success', async () => {
+      Child.findById.mockResolvedValue(child);
+      Child.getCurrentMission.mockResolvedValue({});
+      const res = await request(server).get('/child/1/mission');
+
+      expect(res.status).toBe(200);
+    });
+
+    it('should return 500 on no child found', async () => {
+      Child.findById.mockResolvedValue(null);
+      const res = await request(server).get('/child/1/mission');
+
+      expect(res.status).toBe(500);
+      expect(res.body.message).toBe('error retrieving child data');
+    });
+  });
+
   describe('PUT child/:id/mission/read', () => {
     it('should return 200 on success', async () => {
       Child.findById.mockResolvedValue(child);
