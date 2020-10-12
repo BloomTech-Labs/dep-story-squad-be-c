@@ -154,7 +154,7 @@ router.get('/:id/mission', checkToken, function (req, res) {
     });
 });
 
-router.get('/:id/progress', (req, res) => {
+router.get('/:id/progress', checkToken, (req, res) => {
   Child.findById(req.params.id)
     .then((child) => {
       if (child) {

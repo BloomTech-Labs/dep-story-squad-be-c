@@ -202,6 +202,33 @@ Returns:
 
 <br />
 
+## - get a  child's mission progress
+
+> #### GET /child/:childID/progress
+
+```
+Expects:
+    header:{
+        authorization: bearer <JWT token>
+    }
+```
+
+```
+Returns:
+    {
+        progress: {
+            "id": <int>,
+            "child_id": <int>,
+            "mission_id": <int>,
+            "read": <boolean>,
+            "write": <boolean>,
+            "draw": <boolean>
+        }
+    }
+```
+
+<br />
+
 ## - update read progress
 
 > #### PUT /child/:childID/mission/read
