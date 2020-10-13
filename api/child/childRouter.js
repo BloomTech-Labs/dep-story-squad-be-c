@@ -25,10 +25,10 @@ function createToken(user) {
 router.get('/', function (req, res) {
   Child.findAll()
     .then((children) => {
-      if(children){
+      if (children) {
         res.status(200).json(children);
       } else {
-        res.status(404).json({ message: 'No children found' })
+        res.status(404).json({ message: 'No children found' });
       }
     })
     .catch(() => {
@@ -241,9 +241,7 @@ router.post('/:id/mission/write', checkToken, async function (req, res) {
         //so now we should have an array of objects ready to put in the DB
         await submissions.map((obj) => {
           Child.addWriting(obj)
-            .then(() => {
-
-            })
+            .then(() => {})
             .catch((err) => {
               res.json({
                 error: err,
@@ -282,9 +280,7 @@ router.post('/:id/mission/draw', checkToken, async function (req, res) {
           child_id: child.id,
         };
         Child.addWriting(submissionObject)
-          .then(() => {
-            
-          })
+          .then(() => {})
           .catch((err) => {
             res.json({ error: err });
           });
