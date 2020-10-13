@@ -25,12 +25,14 @@ function createToken(user) {
 router.get('/', function (req, res) {
   Child.findAll()
     .then((children) => {
-      console.log(children);
-      res.status(200).json(children);
+      if(children){
+        res.status(200).json(children);
+      } else {
+        res.status(404).json({ message: 'No children found' })
+      }
     })
-    .catch((err) => {
-      console.log(err);
-      res.status(500).json({ message: err.essage });
+    .catch(() => {
+      res.status(500);
     });
 });
 
@@ -48,7 +50,6 @@ router.post('/:id', authRequired, function (req, res) {
           //check for mission progress and make a db entry if none is found
           Child.getMissionProgress(req.params.id)
             .then((progress) => {
-              console.log(progress);
               if (progress) {
                 res.status(200).json({
                   token: token,
@@ -68,7 +69,6 @@ router.post('/:id', authRequired, function (req, res) {
               } else {
                 Child.createMissionProgress(req.params.id)
                   .then((newProgress) => {
-                    console.log(newProgress);
                     if (newProgress) {
                       res.status(200).json({
                         token: token,
@@ -201,7 +201,6 @@ router.put('/:id/mission/read', (req, res) => {
 //add each of those post objects to the db
 
 router.post('/:id/mission/write', checkToken, async function (req, res) {
-  console.log(req, 'bodylog');
   let child = await Child.findById(req.params.id);
   //we run the images through this multer function
   //we send our files to an AWS bucket
@@ -242,8 +241,8 @@ router.post('/:id/mission/write', checkToken, async function (req, res) {
         //so now we should have an array of objects ready to put in the DB
         await submissions.map((obj) => {
           Child.addWriting(obj)
-            .then((response) => {
-              console.log(response.body);
+            .then(() => {
+
             })
             .catch((err) => {
               res.json({
@@ -283,8 +282,8 @@ router.post('/:id/mission/draw', checkToken, async function (req, res) {
           child_id: child.id,
         };
         Child.addWriting(submissionObject)
-          .then((response) => {
-            console.log(response);
+          .then(() => {
+            
           })
           .catch((err) => {
             res.json({ error: err });

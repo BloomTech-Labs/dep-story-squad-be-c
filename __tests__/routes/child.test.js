@@ -46,27 +46,14 @@ describe('Child router endpoints', () => {
       Child.findAll.mockResolvedValue([]);
       const res = await request(server).get('/child');
       expect(res.status).toBe(200);
-      expect(Child.findAll.mock.calls.length).toBe(1);
     });
-  });
 
-  it('should return 200', async () => {
-    Child.findById.mockResolvedValue(child);
-    Child.createMissionProgress.mockResolvedValue({
-      read: false,
-      write: false,
-      draw: false,
+    it('should return 500 on error', async () => {
+      Child.findAll.mockResolvedValue(null);
+      const res = await request(server).get('/child');
+      expect(res.status).toBe(404);
+      expect(res.body.message).toBe('No children found');
     });
-    Child.getMissionProgress.mockResolvedValue({
-      read: false,
-      write: false,
-      draw: false,
-    });
-    const res = await request(server).post('/child/1').send({ pin: '1234' });
-    console.log(res.body, 'test body');
-    expect(res.status).toBe(200);
-    expect(res.body.child.name).toBe('Billy');
-    expect(Child.findAll.mock.calls.length).toBe(1);
   });
 
   describe('POST /child/:id', () => {
@@ -88,6 +75,33 @@ describe('Child router endpoints', () => {
       const res = await request(server).post('/child/1').send({ pin: '1235' });
 
       expect(res.status).toBe(400);
+    });
+
+    it('should run createMissionProgress if no progress found', async () => {
+      Child.findById.mockResolvedValue(child);
+      Child.getMissionProgress.mockResolvedValue({});
+      Child.createMissionProgress.mockResolvedValue({ hello: 1 });
+      const res = await request(server).post('/child/1').send({ pin: '1234' });
+
+      expect(res.status).toBe(200);
+      expect(res.body.mission_progress).toBeTruthy();
+    });
+
+    it('should return 200', async () => {
+      Child.findById.mockResolvedValue(child);
+      Child.createMissionProgress.mockResolvedValue({
+        read: false,
+        write: false,
+        draw: false,
+      });
+      Child.getMissionProgress.mockResolvedValue({
+        read: false,
+        write: false,
+        draw: false,
+      });
+      const res = await request(server).post('/child/1').send({ pin: '1234' });
+      expect(res.status).toBe(200);
+      expect(res.body.child.name).toBe('Billy');
     });
   });
 
@@ -145,22 +159,34 @@ describe('Child router endpoints', () => {
     });
   });
 
-  it('should allow multiple file uploads', async () => {
-    Child.findById.mockResolvedValue(child);
-    Child.addWriting.mockResolvedValue({});
-    const res = await request(server)
-      .post('/child/1/mission/write')
-      .attach('image', '__tests__/surprised.jpg')
-      .attach('image', '__tests__/surprised.jpg');
-    expect(res.status).toBe(200);
+  describe('POST /child/:id/misison/write', () => {
+    it('should allow multiple file uploads', async () => {
+      Child.findById.mockResolvedValue(child);
+      Child.addWriting.mockResolvedValue({});
+      const res = await request(server)
+        .post('/child/1/mission/write')
+        .attach('image', '__tests__/surprised.jpg')
+        .attach('image', '__tests__/surprised.jpg');
+      expect(res.status).toBe(200);
+    });
   });
 
-  it('should allow fingle file uploads', async () => {
-    Child.findById.mockResolvedValue(child);
-    Child.addWriting.mockResolvedValue({});
-    const res = await request(server)
-      .post('/child/1/mission/draw')
-      .attach('image', '__tests__/surprised.jpg');
-    expect(res.status).toBe(200);
+  describe('POST /child/:id/mission/draw', () => {
+    it('should allow single file uploads', async () => {
+      Child.findById.mockResolvedValue(child);
+      Child.addWriting.mockResolvedValue({});
+      const res = await request(server)
+        .post('/child/1/mission/draw')
+        .attach('image', '__tests__/surprised.jpg');
+      expect(res.status).toBe(200);
+    });
+  });
+
+  describe('GET /child/:id/archive', () => {
+    it('should return children and code 200', async () => {
+      Child.getArchive.mockResolvedValue({});
+      const res = await request(server).get('/child/1/archive');
+      expect(res.status).toBe(200);
+    });
   });
 });

@@ -4,48 +4,40 @@ const findAll = async () => {
   return await db('Child');
 };
 
-const findBy = async (filter) => {
-  return await db('Child').where(filter);
-};
-
 const findById = async (id) => {
   return db('Child').where({ id }).first().select('*');
 };
 
-const getChildData = async (id) => {
-  return db('Child')
-    .where({ id })
-    .first()
-    .select('id', 'name', 'username', 'current_mission', 'avatar_url');
-};
+// const getChildData = async (id) => {
+//   return db('Child')
+//     .where({ id })
+//     .first()
+//     .select('id', 'name', 'username', 'current_mission', 'avatar_url');
+// };
 
-const create = async (profile) => {
-  return db('Child').insert(profile).returning('*');
-};
-
-const update = async (id, changes) => {
-  console.log(changes);
-  return await db('profiles')
-    .where({ id: id })
-    .first()
-    .update(changes)
-    .returning('*');
-};
+// const update = async (id, changes) => {
+//   console.log(changes);
+//   return await db('profiles')
+//     .where({ id: id })
+//     .first()
+//     .update(changes)
+//     .returning('*');
+// };
 
 const remove = async (id) => {
   return await db('Child').where({ id }).del();
 };
 
-const findOrCreateChild = async (childObj) => {
-  const foundChild = await findById(childObj.id).then((child) => child);
-  if (foundChild) {
-    return foundChild;
-  } else {
-    return await create(childObj).then((newChild) => {
-      return newChild ? newChild[0] : newChild;
-    });
-  }
-};
+// const findOrCreateChild = async (childObj) => {
+//   const foundChild = await findById(childObj.id).then((child) => child);
+//   if (foundChild) {
+//     return foundChild;
+//   } else {
+//     return await create(childObj).then((newChild) => {
+//       return newChild ? newChild[0] : newChild;
+//     });
+//   }
+// };
 
 //I will make this return prettier data later
 const getChildSubmissions = async (id) => {
@@ -147,18 +139,13 @@ const updateProgress = async (child_id, field) => {
 
 module.exports = {
   findAll,
-  findBy,
   findById,
-  create,
-  update,
   remove,
-  findOrCreateChild,
   getChildSubmissions,
   getCurrentMission,
   addDrawing,
   addWriting,
   getArchive,
-  getChildData,
   getMissionProgress,
   createMissionProgress,
   nextMission,
