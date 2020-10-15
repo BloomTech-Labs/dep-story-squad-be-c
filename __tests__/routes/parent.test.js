@@ -59,6 +59,18 @@ describe('profiles router endpoints', () => {
       const res = await request(server).post('/parent/1').send({ pin: '1235' });
       expect(res.status).toBe(400);
     });
+
+    it('returns 400 if there is no pin sent', async () => {
+      Parents.findById.mockResolvedValue({
+        id: '1',
+        pin: '1234',
+        name: 'jeff',
+        email: 'test@testing.com',
+        admin: false,
+      });
+      const res = await request(server).post('/parent/1');
+      expect(res.status).toBe(400);
+    });
   });
 
   describe('POST /parent/:id/children', () => {
