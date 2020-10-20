@@ -60,6 +60,7 @@ const authRequired = require('../middleware/authRequired');
  *      500:
  *        description: 'Error making prediction'
  */
+
 router.get('/ocr/:URL', authRequired, function (req, res) {
   const URL = String(req.params.URL);
 

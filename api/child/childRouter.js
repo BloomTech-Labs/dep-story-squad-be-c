@@ -275,13 +275,13 @@ router.post('/:id/mission/draw', checkToken, async function (req, res) {
         return res.json({ message: 'file undefined' });
       } else {
         let result = await dsModel.getPrediction(req.file.location);
-          console.log(result.data);
-          let submissionObject = {
-            file_path: req.file.location,
-            score: result.data,
-            mission_id: child.current_mission,
-            child_id: child.id,
-          };
+        console.log(result.data);
+        let submissionObject = {
+          file_path: req.file.location,
+          score: result.data,
+          mission_id: child.current_mission,
+          child_id: child.id,
+        };
         Child.addWriting(submissionObject)
           .then(() => {})
           .catch((err) => {
@@ -306,12 +306,5 @@ router.get('/:id/archive', checkToken, function (req, res) {
       res.json({ err });
     });
 });
-
-const mockDSCall = function () {
-  return {
-    score: Math.trunc(Math.random() * 100),
-    //flagged: false
-  };
-};
 
 module.exports = router;
