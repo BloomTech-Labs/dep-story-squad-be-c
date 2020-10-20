@@ -206,16 +206,24 @@ describe('profiles router endpoints', () => {
 
   describe('DELETE /parent/:id/children/:child_id', () => {
     it('should return 200 when child is deleted from DB succesfully', async () => {
+      Parents.createChild.mockResolvedValue({
+        id: 1,
+        name: 'tim',
+        writing_score: 50,
+        current_mission: 1,
+        avatar_url: 'fake/url.com',
+        parent_id: 11,
+      });
       Child.findById.mockResolvedValue({
         id: 1,
         name: 'tim',
         writing_score: 50,
         current_Mission: 1,
         avatar_url: 'fake/url.com',
-        parent_id: 1,
+        parent_id: 11,
       });
-      const res = await request(server).delete('/parent/1/children/1');
-      console.log('HERE', res);
+      const res = await request(server).delete('/parent/11/children/1');
+      // console.log('HERE', res);
       expect(res.status).toBe(200);
     });
   });
