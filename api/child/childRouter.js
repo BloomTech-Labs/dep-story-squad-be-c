@@ -274,10 +274,10 @@ router.post('/:id/mission/draw', checkToken, async function (req, res) {
       if (req.file === undefined) {
         return res.json({ message: 'file undefined' });
       } else {
-        let result = await dsModel.getPrediction(url);
+        let result = await dsModel.getPrediction(req.file.location);
           console.log(result.data);
           let submissionObject = {
-            file_path: url,
+            file_path: req.file.location,
             score: result.data,
             mission_id: child.current_mission,
             child_id: child.id,
