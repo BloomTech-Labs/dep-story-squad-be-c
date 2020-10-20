@@ -1,6 +1,7 @@
 const express = require('express');
 const authRequired = require('../middleware/authRequired');
 const Child = require('./childModel');
+const dsModel = require('../dsService/dsModel.js');
 const router = express.Router();
 const jwt = require('jsonwebtoken');
 //const checkProgress = require('../middleware/checkProgress');
@@ -200,7 +201,7 @@ router.put('/:id/mission/read', (req, res) => {
 //add those scores and flags to the urls to make each post object
 //add each of those post objects to the db
 
-router.post('/:id/mission/write', checkToken, async function (req, res) {
+router.post('/:id/mission/write', async function (req, res) {
   let child = await Child.findById(req.params.id);
   //we run the images through this multer function
   //we send our files to an AWS bucket
@@ -227,11 +228,12 @@ router.post('/:id/mission/write', checkToken, async function (req, res) {
         //we get the scores and flags back
         //and construct the submission objects to save to the DB
         let submissions = [];
-        images.map((url) => {
-          let result = mockDSCall(url);
+        images.map(async (url) => {
+          let result = await dsModel.getPrediction(url);
+          console.log(result.data);
           let submissionObject = {
             file_path: url,
-            ...result,
+            score: result.data,
             mission_id: child.current_mission,
             child_id: child.id,
           };
@@ -272,10 +274,11 @@ router.post('/:id/mission/draw', checkToken, async function (req, res) {
       if (req.file === undefined) {
         return res.json({ message: 'file undefined' });
       } else {
-        let result = mockDSCall(req.file.location);
+        let result = await dsModel.getPrediction(req.file.location);
+        console.log(result.data);
         let submissionObject = {
           file_path: req.file.location,
-          ...result,
+          score: result.data,
           mission_id: child.current_mission,
           child_id: child.id,
         };
@@ -303,12 +306,5 @@ router.get('/:id/archive', checkToken, function (req, res) {
       res.json({ err });
     });
 });
-
-const mockDSCall = function () {
-  return {
-    score: Math.trunc(Math.random() * 100),
-    //flagged: false
-  };
-};
 
 module.exports = router;
