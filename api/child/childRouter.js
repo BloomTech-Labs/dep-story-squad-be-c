@@ -1,6 +1,7 @@
 const express = require('express');
 const authRequired = require('../middleware/authRequired');
 const Child = require('./childModel');
+const dsModel = require('../dsService/dsModel.js');
 const router = express.Router();
 const jwt = require('jsonwebtoken');
 //const checkProgress = require('../middleware/checkProgress');
@@ -227,8 +228,9 @@ router.post('/:id/mission/write', checkToken, async function (req, res) {
         //we get the scores and flags back
         //and construct the submission objects to save to the DB
         let submissions = [];
-        images.map((url) => {
-          let result = mockDSCall(url);
+        images.map(async (url) => {
+          let result = await dsModel.getPrediction(url);
+          console.log(result);
           let submissionObject = {
             file_path: url,
             ...result,
