@@ -201,7 +201,7 @@ router.put('/:id/mission/read', (req, res) => {
 //add those scores and flags to the urls to make each post object
 //add each of those post objects to the db
 
-router.post('/:id/mission/write', checkToken, async function (req, res) {
+router.post('/:id/mission/write', async function (req, res) {
   let child = await Child.findById(req.params.id);
   //we run the images through this multer function
   //we send our files to an AWS bucket
@@ -230,10 +230,10 @@ router.post('/:id/mission/write', checkToken, async function (req, res) {
         let submissions = [];
         images.map(async (url) => {
           let result = await dsModel.getPrediction(url);
-          console.log(result);
+          console.log(result.data);
           let submissionObject = {
             file_path: url,
-            ...result,
+            score: result.data,
             mission_id: child.current_mission,
             child_id: child.id,
           };
@@ -274,13 +274,14 @@ router.post('/:id/mission/draw', checkToken, async function (req, res) {
       if (req.file === undefined) {
         return res.json({ message: 'file undefined' });
       } else {
-        let result = mockDSCall(req.file.location);
-        let submissionObject = {
-          file_path: req.file.location,
-          ...result,
-          mission_id: child.current_mission,
-          child_id: child.id,
-        };
+        let result = await dsModel.getPrediction(url);
+          console.log(result.data);
+          let submissionObject = {
+            file_path: url,
+            score: result.data,
+            mission_id: child.current_mission,
+            child_id: child.id,
+          };
         Child.addWriting(submissionObject)
           .then(() => {})
           .catch((err) => {
