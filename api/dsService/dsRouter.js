@@ -60,54 +60,11 @@ const authRequired = require('../middleware/authRequired');
  *      500:
  *        description: 'Error making prediction'
  */
-router.get('/predict/:x1/:x2/:3', authRequired, function (req, res) {
+router.get('/predict/:x1', authRequired, function (req, res) {
   const x1 = String(req.params.x1);
-  const x2 = String(req.params.x2);
-  const x3 = String(req.params.x3);
 
   dsModel
-    .getPrediction(x1, x2, x3)
-    .then((response) => {
-      res.status(200).json(response.data);
-    })
-    .catch((error) => {
-      console.error(error);
-      res.status(500).json(error);
-    });
-});
-
-/**
- * @swagger
- * /data/viz/{state}:
- *  get:
- *    description: plotly vizualization data
- *    summary: Returns a plotly data
- *    security:
- *      - okta: []
- *    tags:
- *      - data
- *    parameters:
- *      - state:
- *        name: state
- *        in: path
- *        description: get viz data for state
- *        required: true
- *        example: UT
- *        schema:
- *          type: string
- *    responses:
- *      200:
- *        description: A plotly result object. See [DS service](https://ds-bw-test.herokuapp.com/#/default/viz_viz__statecode__get) for detailed docs.
- *      401:
- *        $ref: '#/components/responses/UnauthorizedError'
- *      500:
- *        description: 'Error making prediction'
- */
-router.get('/viz/:state', authRequired, function (req, res) {
-  const state = String(req.params.state);
-
-  dsModel
-    .getViz(state)
+    .getPrediction(x1)
     .then((response) => {
       res.status(200).json(response.data);
     })
