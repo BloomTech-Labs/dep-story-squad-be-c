@@ -60,8 +60,8 @@ const authRequired = require('../middleware/authRequired');
  *      500:
  *        description: 'Error making prediction'
  */
-router.get('/predict/:x1', authRequired, function (req, res) {
-  const x1 = String(req.params.x1);
+router.get('/ocr/:URL', authRequired, function (req, res) {
+  const URL = String(req.params.URL);
 
   dsModel
     .getPrediction(x1)
