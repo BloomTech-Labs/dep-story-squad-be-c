@@ -1,45 +1,36 @@
 const db = require('../../data/db-config');
-
+/**
+ * A method to get all children from the database
+ * @returns {Promise} promise that resolves to array of all children
+ */
 const findAll = async () => {
   return await db('Child');
 };
 
+/**
+ * A method to get a child by id
+ * @param {int} id the unique id of the child within the DB
+ * @returns {Promise} promise that resolves to a user with the matching id, empty if not found
+ */
 const findById = async (id) => {
   return db('Child').where({ id }).first().select('*');
 };
 
-// const getChildData = async (id) => {
-//   return db('Child')
-//     .where({ id })
-//     .first()
-//     .select('id', 'name', 'username', 'current_mission', 'avatar_url');
-// };
-
-// const update = async (id, changes) => {
-//   console.log(changes);
-//   return await db('profiles')
-//     .where({ id: id })
-//     .first()
-//     .update(changes)
-//     .returning('*');
-// };
-
+/**
+ * A method to delete the child with given id from the DB
+ * @param {int} id
+ * @returns {Promise} promise that resolves to a count of # rows deleted
+ */
 const remove = async (id) => {
   return await db('Child').where({ id }).del();
 };
 
-// const findOrCreateChild = async (childObj) => {
-//   const foundChild = await findById(childObj.id).then((child) => child);
-//   if (foundChild) {
-//     return foundChild;
-//   } else {
-//     return await create(childObj).then((newChild) => {
-//       return newChild ? newChild[0] : newChild;
-//     });
-//   }
-// };
-
 //I will make this return prettier data later
+/**
+ * A method to get the submissions a child has uploaded
+ * @param {int} id 
+ * @returns {Promise} promise that resolves to an object with 2 arrays
+ */
 const getChildSubmissions = async (id) => {
   const drawingsArr = await db('Drawing_Responses')
     .where({ child_id: id })
@@ -54,6 +45,11 @@ const getChildSubmissions = async (id) => {
   return archive;
 };
 
+/**
+ * A method to get the current mission prompt a child is on
+ * @param {int} current_mission
+ * @returns {Promise} promise that resolves to an object with mission info
+ */
 const getCurrentMission = async (current_mission) => {
   const reading = await db('Story')
     .where({ mission_id: current_mission })
@@ -72,10 +68,20 @@ const getCurrentMission = async (current_mission) => {
   return missionObj;
 };
 
+/**
+ * A method to add a drawing object to the db
+ * @param {Object} drawingObj 
+ * @returns {Promise} promise that resolves to an object with drawing info
+ */
 const addDrawing = async (drawingObj) => {
   return db('Drawing_Responses').insert(drawingObj).returning('*');
 };
 
+/**
+ * A method to add a writing object to the db
+ * @param {Object} writingObj
+ *  @returns {Promise} promise that resolves to an object with writing info
+ */
 const addWriting = async (writingObj) => {
   return db('Writing_Responses').insert(writingObj).returning('*');
 };
@@ -94,6 +100,7 @@ const createMissionProgress = async (id) => {
     .returning('*');
 };
 
+// TODO implement this with a cron-job to allow weekly resets (search node-cron)
 //moves a child to the next mission and resets their mission progress
 const nextMission = async (child_id, mission_id) => {
   const updatedChildObject = await db('Child')
