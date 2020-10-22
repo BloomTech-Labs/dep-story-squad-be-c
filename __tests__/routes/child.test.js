@@ -145,22 +145,22 @@ describe('Child router endpoints', () => {
     });
   });
 
-  // it('should allow multiple file uploads', async () => {
-  //   Child.findById.mockResolvedValue(child);
-  //   Child.addWriting.mockResolvedValue({});
-  //   const res = await request(server)
-  //     .post('/child/1/mission/write')
-  //     .attach('image', '__tests__/surprised.jpg')
-  //     .attach('image', '__tests__/surprised.jpg');
-  //   expect(res.status).toBe(200);
-  // });
+  it('should allow multiple file uploads', async () => {
+    Child.findById.mockResolvedValue(child);
+    Child.addWriting.mockResolvedValue({});
+    const res = await request(server)
+      .post('/child/1/mission/write')
+      .attach('image', '__tests__/surprised.jpg')
+      .attach('image', '__tests__/surprised.jpg');
+    expect(res.status).toBe(200);
+  });
 
-  // it('should allow fingle file uploads', async () => {
-  //   Child.findById.mockResolvedValue(child);
-  //   Child.addWriting.mockResolvedValue({});
-  //   const res = await request(server)
-  //     .post('/child/1/mission/draw')
-  //     .attach('image', '__tests__/surprised.jpg');
-  //   expect(res.status).toBe(200);
-  // });
+  it('should allow fingle file uploads', async () => {
+    Child.findById.mockResolvedValue(child);
+    Child.addWriting.mockResolvedValue({});
+    const res = await request(server)
+      .post('/child/1/mission/draw')
+      .attach('image', '__tests__/surprised.jpg');
+    expect(res.status).toBe(200);
+  });
 });
