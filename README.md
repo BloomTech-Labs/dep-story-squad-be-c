@@ -14,7 +14,7 @@ Labs teams must follow all [Labs Engineering Standards](https://labs.lambdaschoo
 
 ## API documentation
 
-All routes can be viewed in eh [/api/README.md](./api/README.md) file
+All routes can be viewed in the [/api/README.md](./api/README.md) file
 
 ## Getting Started
 

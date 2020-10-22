@@ -4,7 +4,6 @@ const Child = require('./childModel');
 const dsModel = require('../dsService/dsModel.js');
 const router = express.Router();
 const jwt = require('jsonwebtoken');
-//const checkProgress = require('../middleware/checkProgress');
 const upload = require('../middleware/multer');
 const multiUpload = upload.array('image', 5);
 const singleUpload = upload.single('image');
@@ -223,8 +222,6 @@ router.post('/:id/mission/write', async function (req, res) {
           fileLocation = fileArray[i].location;
           images.push(fileLocation);
         }
-        //this is where the axios calls to ds would be made
-        //with the url's in the body
         //we get the scores and flags back
         //and construct the submission objects to save to the DB
         let submissions = [];
@@ -239,7 +236,7 @@ router.post('/:id/mission/write', async function (req, res) {
           };
           submissions.push(submissionObject);
         });
-        //console.log(submissions);
+        
         //so now we should have an array of objects ready to put in the DB
         await submissions.map((obj) => {
           Child.addWriting(obj)
