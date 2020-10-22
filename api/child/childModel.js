@@ -86,14 +86,29 @@ const addWriting = async (writingObj) => {
   return db('Writing_Responses').insert(writingObj).returning('*');
 };
 
+/**
+ * A method to get the archive of writing/drawing submissions
+ * @param {int} id
+ * @returns {Promise} promise that resolves to an archive object
+ */
 const getArchive = async (id) => {
   return db('Writing_Responses').where({ child_id: id }).select('*');
 };
 
+/**
+ * A method to get the mission progress object of a child
+ * @param {int} id 
+ * @returns {Promise} promise that resolves to a mission progress object
+ */
 const getMissionProgress = async (id) => {
   return db('Mission_Progress').where({ child_id: id }).first().select('*');
 };
 
+/**
+ * A method to create a mission progress object for the child specified
+ * @param {int} id 
+ * @returns {Promise} promise that resovles to a mission progress object
+ */
 const createMissionProgress = async (id) => {
   return db('Mission_Progress')
     .insert({ child_id: id, read: false, write: false, draw: false })
@@ -101,7 +116,12 @@ const createMissionProgress = async (id) => {
 };
 
 // TODO implement this with a cron-job to allow weekly resets (search node-cron)
-//moves a child to the next mission and resets their mission progress
+/**
+ * A method that moves a child to their next mission and resets their mission progress
+ * @param {int} child_id child id number
+ * @param {int} mission_id the int mission id the child is currently on
+ * @returns {Promise} promise that resolves to a child object with mission progress
+ */
 const nextMission = async (child_id, mission_id) => {
   const updatedChildObject = await db('Child')
     .where({ id: child_id })
@@ -133,7 +153,12 @@ const nextMission = async (child_id, mission_id) => {
   };
 };
 
-//toggle the read write or draw collumn to true in the mission progress table
+/**
+ * A method to set the read, write, or draw fields to true in the childs mission progress
+ * @param {int} child_id the number id of the child
+ * @param {string} field the field being updated (read, write, or draw)
+ * @returns {Promise} promise that resolves to the updated mission progress object
+ */
 const updateProgress = async (child_id, field) => {
   const change = {};
   change[field] = true;
