@@ -28,7 +28,7 @@ const remove = async (id) => {
 //I will make this return prettier data later
 /**
  * A method to get the submissions a child has uploaded
- * @param {int} id 
+ * @param {int} id
  * @returns {Promise} promise that resolves to an object with 2 arrays
  */
 const getChildSubmissions = async (id) => {
@@ -70,7 +70,7 @@ const getCurrentMission = async (current_mission) => {
 
 /**
  * A method to add a drawing object to the db
- * @param {Object} drawingObj 
+ * @param {Object} drawingObj
  * @returns {Promise} promise that resolves to an object with drawing info
  */
 const addDrawing = async (drawingObj) => {
@@ -97,7 +97,7 @@ const getArchive = async (id) => {
 
 /**
  * A method to get the mission progress object of a child
- * @param {int} id 
+ * @param {int} id
  * @returns {Promise} promise that resolves to a mission progress object
  */
 const getMissionProgress = async (id) => {
@@ -106,7 +106,7 @@ const getMissionProgress = async (id) => {
 
 /**
  * A method to create a mission progress object for the child specified
- * @param {int} id 
+ * @param {int} id
  * @returns {Promise} promise that resovles to a mission progress object
  */
 const createMissionProgress = async (id) => {

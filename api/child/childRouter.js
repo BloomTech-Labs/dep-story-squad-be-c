@@ -236,7 +236,7 @@ router.post('/:id/mission/write', async function (req, res) {
           };
           submissions.push(submissionObject);
         });
-        
+
         //so now we should have an array of objects ready to put in the DB
         await submissions.map((obj) => {
           Child.addWriting(obj)
