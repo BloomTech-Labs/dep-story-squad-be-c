@@ -217,7 +217,7 @@ describe('profiles router endpoints', () => {
     expect(res.status).toBe(200);
   });
 
-  // this test below to delete a child needs to use a test DB in order to function with a few children 
+  // this test below to delete a child needs to use a test DB in order to function with a few children
   // seeded in to the DB to test.
 
   // describe('DELETE /parent/:id/children/:child_id', () => {
