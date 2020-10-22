@@ -125,7 +125,11 @@ router.post('/:id/children', checkToken, function (req, res) {
 router.delete('/:id/children/:child_id', checkToken, function (req, res) {
   Child.findById(req.params.child_id)
     .then((child) => {
-      if (child && child.parent_id === req.params.id) {
+      console.log('PARAMS', req.params.id);
+      console.log('CHILD', child);
+      console.log('PARAMSChild.parent_id', child.parent_id);
+      if (child && child.parent_id === Number(req.params.id)) {
+        console.log('remove id', req.params.child_id);
         Child.remove(req.params.child_id)
           .then(() => {
             res.status(200).json({
