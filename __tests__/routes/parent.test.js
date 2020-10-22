@@ -1,6 +1,6 @@
 const request = require('supertest');
 const Parents = require('../../api/parent/parentModel.js');
-const Child = require('../../api/child/childModel');
+// const Child = require('../../api/child/childModel');
 const server = require('../../api/app.js');
 
 jest.mock('../../api/parent/parentModel.js');
@@ -203,6 +203,18 @@ describe('profiles router endpoints', () => {
 
       expect(res.status).toBe(404);
     });
+  });
+
+  it('should return 200 and GET child data for dashboard', async () => {
+    Parents.getChildData.mockResolvedValue({
+      id: 11,
+      name: 'tim',
+      writing_score: 50,
+      current_mission: 1,
+      avatar_url: 'fake/url.com',
+    });
+    const res = await request(server).get('/parent/11/dashboard');
+    expect(res.status).toBe(200);
   });
 
   // this test below to delete a child needs to use a test DB in order to function with a few children 
