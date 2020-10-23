@@ -64,3 +64,5 @@ Here is the general full stack flow for our stripe implementation
     - more webhooks can be implemented if you want to add more functionality
     - more card cases should be tested and handled
 
+### Video Overview
+    https://www.loom.com/share/fceecf71d30745c380e9831d7cb3c274
