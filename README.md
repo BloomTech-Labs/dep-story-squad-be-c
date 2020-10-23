@@ -1,254 +1,78 @@
 # Story Squad API
 
-> ## website here 
 
-# Auth
-
-> ## All the following routes require **`an okta token`** header
+Welcome to your `Basic Node API Repository`. Use this to start your own Greenfield Project using nodejs, express and common industry standards.
 
 
+This repository assumes a handful of industry practices and standards. We strive to keep you on the bleeding edge of the industry and as a result, we have made some opinions for you so that you don't have to; you're welcome.
 
-# - Parent register and login routes
->
-> ### POST /auth/register
+Read more at <https://docs.labs.lambdaschool.com/labs-api-strarter/>
 
-```
-Expects:
-    header:{
-        authorization: <oktaID token>
-    }
-    body:{
-        pin: <pin for parent account>
-    }
-```
+## Requirements
 
-```
-Returns:
-{
-    id: <int>,
-    message: "parent account created!",
-}
-```
+Labs teams must follow all [Labs Engineering Standards](https://labs.lambdaschool.com/topics/node-js/).
 
-<br />
+## API documentation
 
-> ### POST /auth/login
+All routes can be viewed in the [/api/README.md](./api/README.md) file
 
-```
-Expects:
-    header:{
-        authorization: bearer <oktaID token>
-    }
-```
+## Getting Started
 
-```
-Returns:
-{
-    accounts:[
-                {
-                    id: <int>,
-                    name: <string>,
-                    type: <either 'parent' or 'child'>
-                },
-                {
-                    id: <int>,
-                    name: <string>,
-                    type: <either 'parent' or 'child'>
+### Enviornment Variables
 
-                }
-             ]
-}
-```
+- `PORT` - API port (optional, but helpful with FE running as well)
+  - The following ports are whitelisted for use with okta
+    - 3000
+    - 8000
+    - 8080
+- `DS_API_URL` - URL to a data science api. (eg. <https://ds-bw-test.herokuapp.com/>)
+- `DATABASE_URL` - connection string for postgres database
+- `TEST_DATABASE_URL` - the URL of the postgres database to run tests on
+- `OKTA_URL_ISSUER` - The complete issuer URL for verifying okta access tokens. `https://example.okta.com/oauth2/default`
+- `OKTA_CLIENT_ID` - the okta client ID.
+- `CC_TEST_REPORTER_ID` - id for code climate testing
+- `JWTSECRET` - secret for jwt
+- `ACCESSKEY` - access key for AWS S3 bucket
+- `SECRETKEY` - secret Key for AWS s3 bucket
 
-<br />
+See .env.sample for example values
 
-# Parent routes
+### Setup postgres
 
-## - Login to Parent Account
+There are 3 options to get postgresql installed locally [Choose one]:
 
-> #### Get /parent/:parentID
+1. Use docker. [Install](https://docs.docker.com/get-docker/) for your platform
+    - run: `docker-compose up -d` to start up the postgresql database and pgadmin.
+    - Open a browser to [pgadmin](http://localhost:5050/) and you should see the Dev server already defined.
+    - If you need to start over you will need to delete the folder `$ rm -rf ./data/pg` as this is where all of the server data is stored.
+      - if the database `api-dev` was not created then start over.
+    > When using Docker, you will need to manually create your test database, called `api-test`
+2. Download and install postgresql directly from the [main site](https://www.postgresql.org/download/)
+    - make note of the port, username and password you use to setup the database.
+    - Connect your client to the server manually using the values previously mentioned
+    - You will need to create a database manually using a client.
+    - Make sure to update the DATABASE_URL connection string with the values for username/password, databasename and server port (if not 5432).
+    > Make sure you create `api-dev` to run any queries in Postman or through the swagger documentation, as well as a database called `api-test` to run the Jest tests
+3. Setup a free account at [ElephantSQL](https://www.elephantsql.com/plans.html)
+    - Sign up for a free `Tiney Turtle` plan
+    - copy the URL to the DATABASE_URL .env variable
+    - make sure to add `?ssl=true` to the end of this url
+    > you'll need separate databases for Jest testing (`api-test`) and Postman/Swagger endpoint testing (`api-dev`)
 
-```
-Expects:
-    header:{
-        authorization: <oktaID token>
-    }
-    body:{
-        pin: <pin for parent account>
-    }
-```
+### Setup the application
 
-```
+- create your project repo by forking or using this as a template.
+- run: `npm install` to download all dependencies.
+- run: `cp .env.sample .env` and update the enviornment variables to match your local setup.
+- run: `npm run knex migrate:latest` to create the starting schema.
+- run: `npm run knex seed:run` to populate your db with some data.
+- run: `npm run tests` to confirm all is setup and tests pass.
+- run: `npm run watch:dev` to start nodemon in local dev enviornment.
 
-Returns:
-{
-    message: 'logged in',
-    token: token,
-    parent: {
-                id: <parent's ID>
-                name: <str>
-                email: <str>
-                admin: <str>
-            }
-}
-```
+> Make sure to update the details of the app name, description and version in
+> the `package.json` and `config/jsdoc.js` files.
 
-<br />
+## Contributing
 
-## - Return birds eye child data
-
-> #### GET /parent/:parentID/dashboard
-
-```
-Expects:
-    header:{
-        authorization: bearer <JWT token>
-    }
-```
-
-```
-
-Returns:
-{
-                [
-                   <array of data objects for each of that parents children>
-                   {
-                       name: <str>,
-                       reading_score: <int>,
-                       current_mission: <int>
-                   }
-               ]
-}
-
-```
-
-<br />
-
-## - Add a new Child
-
-> #### Post /parent/:parentID
-
-```
-Expects:
-    header:{
-        authorization: bearer <JWT token>
-    }
-
-body:{
-        name: <str>,
-        username: <str>,
-        avatar_url: <str>,
-        pin: <childs pin>,
-        grade: <int>,
-        dyslexic: <boolean>
-    }
-```
-
-<br />
-
-# Child routes
-
-## - login for a child account
-
-> #### Get /child/:childID
-
-```
-Expects:
-    header:{
-        authorization: <oktaID token>
-    }
-    body:{
-        pin: <pin for parent account>
-    }
-```
-
-```
-Returns:
-Returns:
-{
-    message: 'logged in',
-    token: token,
-    child:{
-            name: <string>,
-            username: <string>,
-            avatar_url: <string>,
-            parent_id: <integer>,
-            current_mission: <string>
-        }
-```
-
-<br />
-
-## - get a child's current mission
-
-> #### GET /child/:childID/mission
-
-```
-Expects:
-    header:{
-        authorization: bearer <JWT token>
-    }
-```
-
-```
-Returns:
-    {
-        id: <id of mission>,
-        read: [
-                <array of image url's for the assigned reading>
-              ],
-        write: <writing prompt>,
-        draw: <drawing prompt>
-    }
-```
-
-<br />
-
-## - post a new writing submission
-
-> #### POST /child/:childID/mission/write
-> > #### Note: the body will need to be form data not JSON
-
-```
-Expects:
-    header: {
-        authorization: bearer <JWT token>
-    }
-        image: <writing png's>,
-
-```
-
-```
-Returns:
-    {
-        message: "We got your submission!"
-    }
-```
-<br />
-
-## - post a new drawing submission
-
-> #### POST /child/:childID/mission/draw
-> > #### Note: the body will need to be for data not JSON
-
-```
-Expects:
-    header: {
-        authorization: bearer <JWT token>
-    }
-        image: <writing png>,
-
-```
-
-```
-Returns:
-    {
-        message: "We got your submission!"
-    }
-```
-<br />
-
-# DS and Admin endpoints still need to be planned out
-
-
-
+See the [contributing doc](https://github.com/Lambda-School-Labs/labs-api-starter/blob/main/CONTRIBUTING.md)
+for more info.
