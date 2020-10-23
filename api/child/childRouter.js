@@ -26,7 +26,11 @@ router.get('/', function (req, res) {
   Child.findAll()
     .then((children) => {
       console.log(children);
-      res.status(200).json(children);
+      if (children) {
+        res.status(200).json(children);
+      } else {
+        res.status(404).json({ message: 'No children found' });
+      }
     })
     .catch((err) => {
       console.log(err);
