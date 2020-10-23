@@ -8,6 +8,10 @@ This repository assumes a handful of industry practices and standards. We strive
 
 Read more at <https://docs.labs.lambdaschool.com/labs-api-strarter/>
 
+## API Here:
+
+https://story-squad-c-api.herokuapp.com/
+
 ## Requirements
 
 Labs teams must follow all [Labs Engineering Standards](https://labs.lambdaschool.com/topics/node-js/).
