@@ -49,6 +49,7 @@ router.get('/login', authRequired, function (req, res) {
         if (data) {
           res.status(200).json({
             message: 'logged in',
+            subscribed: req.profile.subscribed,
             accounts: data,
           });
         } else {

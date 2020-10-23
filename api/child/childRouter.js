@@ -1,5 +1,5 @@
 const express = require('express');
-const authRequired = require('../middleware/authRequired');
+//const authRequired = require('../middleware/authRequired');
 const Child = require('./childModel');
 const router = express.Router();
 const jwt = require('jsonwebtoken');
@@ -35,98 +35,101 @@ router.get('/', function (req, res) {
 });
 
 //login endpoint for child
-router.post('/:id', authRequired, function (req, res) {
-  const id = String(req.params.id);
-  if (req.body.pin) {
-    //retrieve the parent from the db
-    Child.findById(id)
-      .then((child) => {
-        //check the pin
-        console.log(child);
-        console.log(req.body);
-        console.log(child.pin === req.body.pin);
-        console.log(createToken(child));
-        if (child.pin === req.body.pin) {
-          //if the pin is correct make a token and get the dashboard data
-          const token = createToken(child);
-          //check for mission progress and make a db entry if none is found
-          Child.getMissionProgress(req.params.id)
-            .then((progress) => {
-              console.log(progress);
-              if (progress) {
-                res.status(200).json({
-                  token: token,
-                  child: {
-                    id: child.id,
-                    name: child.name,
-                    username: child.username,
-                    current_mission: child.current_mission,
-                    avatar_url: child.avatar_url,
-                  },
-                  mission_progress: {
-                    read: progress.read,
-                    write: progress.write,
-                    draw: progress.draw,
-                  },
-                });
-              } else {
-                Child.createMissionProgress(req.params.id)
-                  .then((newProgress) => {
-                    console.log(newProgress);
-                    if (newProgress) {
-                      res.status(200).json({
-                        token: token,
-                        child: {
-                          id: child.id,
-                          name: child.name,
-                          username: child.username,
-                          current_mission: child.current_mission,
-                          avatar_url: child.avatar_url,
-                        },
-                        mission_progress: {
-                          read: newProgress.read,
-                          write: newProgress.write,
-                          draw: newProgress.draw,
-                        },
-                      });
-                    } else {
-                      res.status(500).json({
-                        message: 'error creating mission progress object',
-                      });
-                    }
-                  })
-                  .catch((err) => {
-                    res.status(500).json({
-                      error: err,
-                      message: 'error retrieving mission progress object',
-                    });
+router.post(
+  '/:id',
+  /*authRequired,*/ function (req, res) {
+    const id = String(req.params.id);
+    if (req.body.pin) {
+      //retrieve the parent from the db
+      Child.findById(id)
+        .then((child) => {
+          //check the pin
+          //console.log(child);
+          //console.log(req.body);
+          //console.log(child.pin === req.body.pin);
+          //console.log(createToken(child));
+          if (child.pin === req.body.pin) {
+            //if the pin is correct make a token and get the dashboard data
+            const token = createToken(child);
+            //check for mission progress and make a db entry if none is found
+            Child.getMissionProgress(req.params.id)
+              .then((progress) => {
+                console.log(progress);
+                if (progress) {
+                  res.status(200).json({
+                    token: token,
+                    child: {
+                      id: child.id,
+                      name: child.name,
+                      username: child.username,
+                      current_mission: child.current_mission,
+                      avatar_url: child.avatar_url,
+                    },
+                    mission_progress: {
+                      read: progress.read,
+                      write: progress.write,
+                      draw: progress.draw,
+                    },
                   });
-              }
-            })
-            .catch((err) => {
-              res.status(500).json({
-                error: err,
-                message: 'error retrieving mission progress object',
+                } else {
+                  Child.createMissionProgress(req.params.id)
+                    .then((newProgress) => {
+                      console.log(newProgress);
+                      if (newProgress) {
+                        res.status(200).json({
+                          token: token,
+                          child: {
+                            id: child.id,
+                            name: child.name,
+                            username: child.username,
+                            current_mission: child.current_mission,
+                            avatar_url: child.avatar_url,
+                          },
+                          mission_progress: {
+                            read: newProgress.read,
+                            write: newProgress.write,
+                            draw: newProgress.draw,
+                          },
+                        });
+                      } else {
+                        res.status(500).json({
+                          message: 'error creating mission progress object',
+                        });
+                      }
+                    })
+                    .catch((err) => {
+                      res.status(500).json({
+                        error: err,
+                        message: 'error retrieving mission progress object',
+                      });
+                    });
+                }
+              })
+              .catch((err) => {
+                res.status(500).json({
+                  error: err,
+                  message: 'error retrieving mission progress object',
+                });
               });
+          } else {
+            res.status(400).json({
+              message: 'incorrect pin',
             });
-        } else {
+          }
+        })
+        .catch((err) => {
           res.status(400).json({
-            message: 'incorrect pin',
+            message: 'there is no child with that ID',
+            error: err,
           });
-        }
-      })
-      .catch((err) => {
-        res.status(400).json({
-          message: 'there is no child with that ID',
-          error: err,
         });
+    } else {
+      res.status(400).json({
+        message: 'please include a pin',
       });
-  } else {
-    res.status(400).json({
-      message: 'please include a pin',
-    });
+    }
   }
-});
+);
 
 //get current mission endpoint
 //check the token
