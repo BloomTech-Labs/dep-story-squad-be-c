@@ -154,6 +154,48 @@ router.get('/:id/mission', checkToken, function (req, res) {
     });
 });
 
+
+router.get('/:id/progress', checkToken, (req, res) => {
+  Child.findById(req.params.id)
+    .then((child) => {
+      if (child) {
+        Child.getMissionProgress(child.id)
+          .then((mission) => {
+            res.status(200).json({ progress: mission });
+          })
+          .catch((err) => {
+            res.status(500).json({ error: err });
+          });
+      } else {
+        res.status(404).json({ message: 'child not found' });
+      }
+    })
+    .catch((err) => {
+      res.status(500).json({ error: err });
+    });
+});
+
+router.put('/:id/mission/read', checkToken, (req, res) => {
+  Child.findById(req.params.id)
+    .then((child) => {
+      if (child) {
+        Child.updateProgress(child.id, 'read')
+          .then((resp) => {
+            res.status(200).json({ progress: resp[0] });
+          })
+          .catch((err) => {
+            res.status(500).json({ message: 'There was an error', error: err });
+          });
+      } else {
+        res.status(404).json({ message: 'Child not found.' });
+      }
+    })
+    .catch((err) => {
+      res.status(500).json({ message: 'There was an error', error: err });
+    });
+});
+
+
 //post writting submission
 //use the multer function to send to the aws bucket and get the url's back
 //send each of those url's to the ds endpoint to get scores and flags back
@@ -161,7 +203,7 @@ router.get('/:id/mission', checkToken, function (req, res) {
 //add each of those post objects to the db
 
 router.post('/:id/mission/write', checkToken, async function (req, res) {
-  console.log(req, 'bodylog');
+
   let child = await Child.findById(req.params.id);
   //we run the images through this multer function
   //we send our files to an AWS bucket
