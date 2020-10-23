@@ -174,7 +174,7 @@ router.get('/:id/progress', checkToken, (req, res) => {
     });
 });
 
-router.put('/:id/mission/read', (req, res) => {
+router.put('/:id/mission/read', checkToken, (req, res) => {
   Child.findById(req.params.id)
     .then((child) => {
       if (child) {
@@ -200,7 +200,7 @@ router.put('/:id/mission/read', (req, res) => {
 //add those scores and flags to the urls to make each post object
 //add each of those post objects to the db
 
-router.post('/:id/mission/write', async function (req, res) {
+router.post('/:id/mission/write', checkToken, async function (req, res) {
   let child = await Child.findById(req.params.id);
   //we run the images through this multer function
   //we send our files to an AWS bucket

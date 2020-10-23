@@ -8,6 +8,34 @@ This repository assumes a handful of industry practices and standards. We strive
 
 Read more at <https://docs.labs.lambdaschool.com/labs-api-strarter/>
 
+## Quick Guide Video:
+
+https://drive.google.com/file/d/1g6YoAzRyRmPL2EdwqNuUfp_BlxlPC7jS/view?usp=sharing
+
+## API Here:
+
+https://story-squad-c-api.herokuapp.com/
+
+## Contributors
+
+| [Michael Barnes](https://github.com/michaelbarnes7282) |
+| --------------------------------------------- |
+| [<img src="https://github.com/michaelbarnes7282.png" width="200" />](https://github.com/michaelbarnes7282) |
+| [<img src="https://github.com/favicon.ico" width="15"> ](https://github.com/michaelbarnes7282) |
+| [ <img src="https://static.licdn.com/sc/h/al2o9zrvru7aqj8e1x2rzsrca" width="15"> ](https://www.linkedin.com/in/mbarnes01/) |
+
+| [John C Daly](https://github.com/jcdaly97) |
+| --------------------------------------------- |
+| [<img src="https://github.com/jcdaly97.png" width="200" />](https://github.com/jcdaly97) |
+| [<img src="https://github.com/favicon.ico" width="15"> ](https://github.com/jcdaly97) |
+| [ <img src="https://static.licdn.com/sc/h/al2o9zrvru7aqj8e1x2rzsrca" width="15"> ](https://www.linkedin.com/in/jack-daly-a2a3031b6/) |
+
+| [Dawson Hamm](https://github.com/dawsonhammdev) |
+| --------------------------------------------- |
+| [<img src="https://github.com/dawsonhammdev.png" width="200" />](https://github.com/dawsonhammdev) |
+| [<img src="https://github.com/favicon.ico" width="15"> ](https://github.com/dawsonhammdev) |
+| [ <img src="https://static.licdn.com/sc/h/al2o9zrvru7aqj8e1x2rzsrca" width="15"> ](https://www.linkedin.com/in/dawson-hamm/) |
+
 ## Requirements
 
 Labs teams must follow all [Labs Engineering Standards](https://labs.lambdaschool.com/topics/node-js/).
