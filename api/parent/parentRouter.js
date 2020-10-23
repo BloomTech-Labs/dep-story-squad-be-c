@@ -43,6 +43,8 @@ router.post('/:id', authRequired, function (req, res) {
                     name: parent.name,
                     email: parent.email,
                     admin: parent.admin,
+                    subscribed: parent.subscribed,
+                    stripe_email: parent.stripe_email,
                   },
                 });
               } else {

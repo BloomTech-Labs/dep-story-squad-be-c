@@ -1,9 +1,9 @@
 const express = require('express');
-const authRequired = require('../middleware/authRequired');
+//const authRequired = require('../middleware/authRequired');
 const Child = require('./childModel');
-const dsModel = require('../dsService/dsModel.js');
 const router = express.Router();
 const jwt = require('jsonwebtoken');
+//const checkProgress = require('../middleware/checkProgress');
 const upload = require('../middleware/multer');
 const multiUpload = upload.array('image', 5);
 const singleUpload = upload.single('image');
@@ -25,104 +25,115 @@ function createToken(user) {
 router.get('/', function (req, res) {
   Child.findAll()
     .then((children) => {
+      console.log(children);
       if (children) {
         res.status(200).json(children);
       } else {
         res.status(404).json({ message: 'No children found' });
       }
     })
-    .catch(() => {
-      res.status(500);
+    .catch((err) => {
+      console.log(err);
+      res.status(400).json({ message: err.essage });
     });
 });
 
 //login endpoint for child
-router.post('/:id', authRequired, function (req, res) {
-  const id = String(req.params.id);
-  if (req.body.pin) {
-    //retrieve the parent from the db
-    Child.findById(id)
-      .then((child) => {
-        //check the pin
-        if (child.pin === req.body.pin) {
-          //if the pin is correct make a token and get the dashboard data
-          const token = createToken(child);
-          //check for mission progress and make a db entry if none is found
-          Child.getMissionProgress(req.params.id)
-            .then((progress) => {
-              if (progress) {
-                res.status(200).json({
-                  token: token,
-                  child: {
-                    id: child.id,
-                    name: child.name,
-                    username: child.username,
-                    current_mission: child.current_mission,
-                    avatar_url: child.avatar_url,
-                  },
-                  mission_progress: {
-                    read: progress.read,
-                    write: progress.write,
-                    draw: progress.draw,
-                  },
-                });
-              } else {
-                Child.createMissionProgress(req.params.id)
-                  .then((newProgress) => {
-                    if (newProgress) {
-                      res.status(200).json({
-                        token: token,
-                        child: {
-                          id: child.id,
-                          name: child.name,
-                          username: child.username,
-                          current_mission: child.current_mission,
-                          avatar_url: child.avatar_url,
-                        },
-                        mission_progress: {
-                          read: newProgress.read,
-                          write: newProgress.write,
-                          draw: newProgress.draw,
-                        },
-                      });
-                    } else {
-                      res.status(500).json({
-                        message: 'error creating mission progress object',
-                      });
-                    }
-                  })
-                  .catch((err) => {
-                    res.status(500).json({
-                      error: err,
-                      message: 'error retrieving mission progress object',
-                    });
+router.post(
+  '/:id',
+  /*authRequired,*/ function (req, res) {
+    const id = String(req.params.id);
+    if (req.body.pin) {
+      //retrieve the parent from the db
+      Child.findById(id)
+        .then((child) => {
+          //check the pin
+          //console.log(child);
+          //console.log(req.body);
+          //console.log(child.pin === req.body.pin);
+          //console.log(createToken(child));
+          if (child.pin === req.body.pin) {
+            //if the pin is correct make a token and get the dashboard data
+            const token = createToken(child);
+            //check for mission progress and make a db entry if none is found
+            Child.getMissionProgress(req.params.id)
+              .then((progress) => {
+                console.log(progress);
+                if (progress) {
+                  res.status(200).json({
+                    token: token,
+                    child: {
+                      id: child.id,
+                      name: child.name,
+                      username: child.username,
+                      current_mission: child.current_mission,
+                      avatar_url: child.avatar_url,
+                    },
+                    mission_progress: {
+                      read: progress.read,
+                      write: progress.write,
+                      draw: progress.draw,
+                    },
                   });
-              }
-            })
-            .catch((err) => {
-              res.status(500).json({
-                error: err,
-                message: 'error retrieving mission progress object',
+                } else {
+                  Child.createMissionProgress(req.params.id)
+                    .then((newProgress) => {
+                      console.log(newProgress);
+                      if (newProgress) {
+                        res.status(200).json({
+                          token: token,
+                          child: {
+                            id: child.id,
+                            name: child.name,
+                            username: child.username,
+                            current_mission: child.current_mission,
+                            avatar_url: child.avatar_url,
+                          },
+                          mission_progress: {
+                            read: newProgress.read,
+                            write: newProgress.write,
+                            draw: newProgress.draw,
+                          },
+                        });
+                      } else {
+                        res.status(500).json({
+                          message: 'error creating mission progress object',
+                        });
+                      }
+                    })
+                    .catch((err) => {
+                      res.status(500).json({
+                        error: err,
+                        message: 'error retrieving mission progress object',
+                      });
+                    });
+                }
+              })
+              .catch((err) => {
+                res.status(500).json({
+                  error: err,
+                  message: 'error retrieving mission progress object',
+                });
               });
+          } else {
+            res.status(400).json({
+              message: 'incorrect pin',
             });
-        } else {
+          }
+        })
+        .catch((err) => {
           res.status(400).json({
-            message: 'incorrect pin',
+            message: 'there is no child with that ID',
+            error: err,
           });
-        }
-      })
-      .catch((err) => {
-        res.status(400).json({
-          message: 'there is no child with that ID',
-          error: err,
         });
+    } else {
+      res.status(400).json({
+        message: 'please include a pin',
       });
-  } else {
-    res.status(400).json({
-      message: 'please include a pin',
-    });
+    }
   }
-});
+);
 
 //get current mission endpoint
 //check the token
@@ -131,13 +142,9 @@ router.get('/:id/mission', checkToken, function (req, res) {
     .then((child) => {
       Child.getCurrentMission(child.current_mission)
         .then((mission) => {
-          if (mission) {
-            res.status(200).json({
-              ...mission,
-            });
-          } else {
-            res.status(404).json({ message: 'no mission found' });
-          }
+          res.status(200).json({
+            ...mission,
+          });
         })
         .catch((err) => {
           res.status(500).json({
@@ -222,25 +229,28 @@ router.post('/:id/mission/write', checkToken, async function (req, res) {
           fileLocation = fileArray[i].location;
           images.push(fileLocation);
         }
+        //this is where the axios calls to ds would be made
+        //with the url's in the body
         //we get the scores and flags back
         //and construct the submission objects to save to the DB
         let submissions = [];
-        images.map(async (url) => {
-          let result = await dsModel.getPrediction(url);
-          console.log(result.data);
+        images.map((url) => {
+          let result = mockDSCall(url);
           let submissionObject = {
             file_path: url,
-            score: result.data,
+            ...result,
             mission_id: child.current_mission,
             child_id: child.id,
           };
           submissions.push(submissionObject);
         });
-
+        //console.log(submissions);
         //so now we should have an array of objects ready to put in the DB
         await submissions.map((obj) => {
           Child.addWriting(obj)
-            .then(() => {})
+            .then((response) => {
+              console.log(response);
+            })
             .catch((err) => {
               res.json({
                 error: err,
@@ -248,10 +258,8 @@ router.post('/:id/mission/write', checkToken, async function (req, res) {
             });
         });
         //if an error wasn't thrown that means that we've successfully submitted!
-        const mission = await Child.updateProgress(req.params.id, 'write');
         res.status(200).json({
           message: 'we got your submission!',
-          progress: mission[0],
         });
       }
     }
@@ -271,23 +279,21 @@ router.post('/:id/mission/draw', checkToken, async function (req, res) {
       if (req.file === undefined) {
         return res.json({ message: 'file undefined' });
       } else {
-        let result = await dsModel.getPrediction(req.file.location);
-        console.log(result.data);
+        let result = mockDSCall(req.file.location);
         let submissionObject = {
           file_path: req.file.location,
-          score: result.data,
+          ...result,
           mission_id: child.current_mission,
           child_id: child.id,
         };
         Child.addWriting(submissionObject)
-          .then(() => {})
+          .then((response) => {
+            console.log(response);
+          })
           .catch((err) => {
             res.json({ error: err });
           });
-        const mission = await Child.updateProgress(req.params.id, 'draw');
-        res
-          .status(200)
-          .json({ message: 'we got your submission!', progress: mission[0] });
+        res.status(200).json({ message: 'we got your submission!' });
       }
     }
   });
@@ -303,5 +309,12 @@ router.get('/:id/archive', checkToken, function (req, res) {
       res.json({ err });
     });
 });
+
+const mockDSCall = function () {
+  return {
+    score: Math.trunc(Math.random() * 100),
+    //flagged: false
+  };
+};
 
 module.exports = router;

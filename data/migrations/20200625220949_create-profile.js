@@ -7,7 +7,9 @@ exports.up = (knex) => {
       table.string('email').notNullable().unique();
       table.string('pin').notNullable();
       table.boolean('admin').notNullable().defaultTo(0);
-      table.boolean('subscription').notNullable().defaultTo(0);
+      table.string('stripe_id').unique();
+      table.string('sub_id').unique();
+      table.boolean('subscribed').notNullable().defaultTo(0);
       table.string('type').notNullable().defaultTo('parent');
       table.timestamps(true, true);
     })

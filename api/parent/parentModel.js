@@ -84,6 +84,10 @@ const getChildData = async (id) => {
     .select('id', 'name', 'writing_score', 'current_mission', 'avatar_url');
 };
 
+const getSubscribed = async (id) => {
+  return await db('Parent').where({ id }).first().select('subscribed');
+};
+
 module.exports = {
   findAll,
   findBy,
@@ -95,4 +99,5 @@ module.exports = {
   createChild,
   getNamesAndIDS,
   getChildData,
+  getSubscribed,
 };

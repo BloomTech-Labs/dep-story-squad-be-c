@@ -35,7 +35,7 @@ const authRequired = async (req, res, next) => {
         if (profile) {
           req.profile = profile;
         } else if (jwtUserObj.id && jwtUserObj.name && jwtUserObj.email) {
-          req.profile = jwtUserObj;
+          req.newProfile = jwtUserObj;
         } else {
           throw new Error('unable to process id token');
         }

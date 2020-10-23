@@ -11,8 +11,6 @@ exports.seed = function (knex) {
           name: faker.name.firstName(),
           email: 'llama001@maildrop.cc',
           pin: '1234',
-          subscription: true,
-          admin: false,
         },
         //{name: faker.name.firstName(), email: 'llama002@maildrop.cc', pin: 1234, subscription: 1, admin: false},
       ]);
