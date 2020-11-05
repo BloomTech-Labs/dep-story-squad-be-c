@@ -216,11 +216,11 @@ async function parseAndSaveSubmissions(images, child) {
         try {
           await Child.addWriting(submissionObject);
         } catch (err) {
-          console.error('error', err);
+          console.log('error', err);
         }
         return true;
       } catch (e) {
-        console.error('error', e);
+        console.log('error', e);
         return false;
       }
     })
@@ -287,11 +287,11 @@ router.post('/:id/mission/draw', checkToken, async function (req, res) {
           mission_id: child.current_mission,
           child_id: child.id,
         };
-        Child.addDrawing(submissionObject)
-          .then(() => {})
-          .catch((err) => {
-            res.json({ error: err });
-          });
+        try {
+          await Child.addDrawing(submissionObject);
+        } catch (err) {
+          console.log('error', err);
+        }
         const mission = await Child.updateProgress(req.params.id, 'draw');
         res
           .status(200)

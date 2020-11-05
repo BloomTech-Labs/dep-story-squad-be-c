@@ -30,7 +30,7 @@ const dsRouter = require('./dsService/dsRouter');
 const app = express();
 
 process.on('unhandledRejection', (reason, p) => {
-  console.error('Unhandled Rejection at: Promise', p, 'reason:', reason);
+  console.log('Unhandled Rejection at: Promise', p, 'reason:', reason);
   // application specific logging, throwing an error, or other logic here
 });
 // docs would need to be built and committed
@@ -74,7 +74,7 @@ app.use(function (err, req, res, next) {
       res.locals.error = err;
     }
   }
-  console.error(err);
+  console.log(err);
   if (process.env.NODE_ENV === 'production' && !res.locals.message) {
     res.locals.message = 'ApplicationError';
     res.locals.status = 500;
