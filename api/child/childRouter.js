@@ -194,12 +194,44 @@ router.put('/:id/mission/read', checkToken, (req, res) => {
     });
 });
 
+/**
+ * Parse and save writing submission
+ * @param images
+ * @param child
+ * @returns {Promise<any[]>}
+ */
+async function parseAndSaveSubmissions(images, child) {
+  return Promise.all(
+    images.map(async (url) => {
+      try {
+        // return writing scores and round it to nearest integer
+        let result = await dsModel.getPrediction(url);
+        // console.log(result.data);
+        let submissionObject = {
+          file_path: url,
+          score: Math.round(result.data),
+          mission_id: child.current_mission,
+          child_id: child.id,
+        };
+        try {
+          await Child.addWriting(submissionObject);
+        } catch (err) {
+          console.log('error', err);
+        }
+        return true;
+      } catch (e) {
+        console.log('error', e);
+        return false;
+      }
+    })
+  );
+}
+
 //post writting submission
 //use the multer function to send to the aws bucket and get the url's back
 //send each of those url's to the ds endpoint to get scores and flags back
 //add those scores and flags to the urls to make each post object
 //add each of those post objects to the db
-
 router.post('/:id/mission/write', checkToken, async function (req, res) {
   let child = await Child.findById(req.params.id);
   //we run the images through this multer function
@@ -222,32 +254,8 @@ router.post('/:id/mission/write', checkToken, async function (req, res) {
           fileLocation = fileArray[i].location;
           images.push(fileLocation);
         }
-        //we get the scores and flags back
-        //and construct the submission objects to save to the DB
-        let submissions = [];
-        images.map(async (url) => {
-          let result = await dsModel.getPrediction(url);
-          console.log(result.data);
-          let submissionObject = {
-            file_path: url,
-            score: result.data,
-            mission_id: child.current_mission,
-            child_id: child.id,
-          };
-          submissions.push(submissionObject);
-        });
+        await parseAndSaveSubmissions(images, child);
 
-        //so now we should have an array of objects ready to put in the DB
-        await submissions.map((obj) => {
-          Child.addWriting(obj)
-            .then(() => {})
-            .catch((err) => {
-              res.json({
-                error: err,
-              });
-            });
-        });
-        //if an error wasn't thrown that means that we've successfully submitted!
         const mission = await Child.updateProgress(req.params.id, 'write');
         res.status(200).json({
           message: 'we got your submission!',
@@ -275,15 +283,15 @@ router.post('/:id/mission/draw', checkToken, async function (req, res) {
         console.log(result.data);
         let submissionObject = {
           file_path: req.file.location,
-          score: result.data,
+          score: Math.round(result.data),
           mission_id: child.current_mission,
           child_id: child.id,
         };
-        Child.addWriting(submissionObject)
-          .then(() => {})
-          .catch((err) => {
-            res.json({ error: err });
-          });
+        try {
+          await Child.addDrawing(submissionObject);
+        } catch (err) {
+          console.log('error', err);
+        }
         const mission = await Child.updateProgress(req.params.id, 'draw');
         res
           .status(200)

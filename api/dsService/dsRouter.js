@@ -70,7 +70,7 @@ router.get('/ocr/:URL', authRequired, function (req, res) {
       res.status(200).json(response.data);
     })
     .catch((error) => {
-      console.error(error);
+      console.log(error);
       res.status(500).json(error);
     });
 });
