@@ -4,13 +4,7 @@ dotenv.config({ path: '../.env' });
 module.exports = {
   development: {
     client: 'pg',
-    connection: {
-      host: 'localhost',
-      port: 5432,
-      user: 'postgres',
-      database: 'StorySquad',
-      password: 'J3$uspenguin',
-    },
+    connection: process.env.DATABASE_URL,
     migrations: { directory: '../data/migrations' },
     seeds: { directory: '../data/seeds' },
     pool: {
