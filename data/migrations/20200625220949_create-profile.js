@@ -98,6 +98,7 @@ exports.up = (knex) => {
     .createTable('Drawing_Responses', function (table) {
       table.increments('id');
       table.string('file_path').notNullable();
+      table.integer('score').notNullable();
       table.boolean('flagged').notNullable().defaultTo(0);
       table
         .integer('child_id')
