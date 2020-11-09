@@ -6,10 +6,10 @@ module.exports = {
     client: 'pg',
     connection: {
       host: 'localhost',
-      port: 5432,
+      port: 5433,
       user: 'postgres',
-      database: 'StorySquad',
-      password: 'J3$uspenguin',
+      database: 'ss-local',
+      password: 'm7veaf56',
     },
     migrations: { directory: '../data/migrations' },
     seeds: { directory: '../data/seeds' },
