@@ -165,7 +165,7 @@ describe('Child router endpoints', () => {
     it('should allow multiple file uploads', async () => {
       Child.findById.mockResolvedValue(child);
       Child.addWriting.mockResolvedValue({});
-      dsModel.getPrediction.mockResolvedValue(-15.7);
+      dsModel.getTextPrediction.mockResolvedValue(-15.7);
       const res = await request(server)
         .post('/child/1/mission/write')
         .attach('image', '__tests__/surprised.jpg')
@@ -178,7 +178,7 @@ describe('Child router endpoints', () => {
     it('should allow single file uploads', async () => {
       Child.findById.mockResolvedValue(child);
       Child.addWriting.mockResolvedValue({});
-      dsModel.getPrediction.mockResolvedValue(-15.7);
+      dsModel.getTextPrediction.mockResolvedValue(-15.7);
 
       const res = await request(server)
         .post('/child/1/mission/draw')
