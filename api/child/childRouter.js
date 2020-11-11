@@ -8,6 +8,7 @@ const upload = require('../middleware/multer');
 const multiUpload = upload.array('image', 5);
 const singleUpload = upload.single('image');
 const checkToken = require('../middleware/jwtRestricted');
+const generateChecksum = require('../middleware/uploadFiles');
 
 //token creator for our JWT
 function createToken(user) {
@@ -227,6 +228,12 @@ async function parseAndSaveSubmissions(images, child) {
   );
 }
 
+/*
+Front end submits mission_progress.id with images.
+
+Once object is created, send to ds api
+*/
+
 //post writting submission
 //use the multer function to send to the aws bucket and get the url's back
 //send each of those url's to the ds endpoint to get scores and flags back
@@ -255,20 +262,48 @@ router.post('/:id/mission/write', checkToken, async function (req, res) {
           images.push(fileLocation);
         }
         //we get the scores and flags back
+        const dsSubmit = {
+          missionProgressID: 1,
+          missionID: child.current_mission,
+          pages: {},
+        };
+        images.map((result, i) => {
+          const updateInd = i + 1;
+          const pageObj = {
+            url: result,
+            checksum: generateChecksum(result),
+          };
+          dsSubmit.pages[updateInd] = pageObj;
+        });
+        //Response from dsSubmit:
+        /*
+        {
+          missionProgressID: undefined,
+          missionID: 1,
+          pages: {
+            '1': {
+              url: 'https://storysquad-teamc-bucket.s3.amazonaws.com/user-content/1605118951973JB_SPICY_RAMEN_4K.jpg',  
+              checksum: 'c0d68b9535e8a5d06c6d45ff48bd89eada2129a139666ea6028d66267ff5b2d041688ce8a8a258faf75e19e3f93846718d04720b7e49389b0fabad8727f896ad'
+            }
+          }
+        }
+        */
         //and construct the submission objects to save to the DB
         let submissions = [];
         //NOTE: We already have urls here because of multer; we just need to generate checksums for them
-        images.map(async (url) => {
-          let result = await dsModel.getTextPrediction(url);
-          console.log(result.data);
+        let result = await dsModel.getTextPrediction(dsSubmit);
+        console.log(result);
+        for (let i = 0; i < images.length; i++) {
           let submissionObject = {
-            file_path: url,
-            score: result.data,
+            file_path: dsSubmit.pages[i].url,
+            // score: result.data,
+            // flagged: result
             mission_id: child.current_mission,
             child_id: child.id,
           };
           submissions.push(submissionObject);
-        });
+        }
+
         await parseAndSaveSubmissions(images, child);
 
         const mission = await Child.updateProgress(req.params.id, 'write');

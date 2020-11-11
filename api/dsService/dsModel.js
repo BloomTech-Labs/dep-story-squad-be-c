@@ -1,7 +1,6 @@
 const axios = require('axios');
 const dsConfig = require('../../config/dsConfig');
 const dsClient = axios.create(dsConfig);
-const generateChecksum = require('../middleware/uploadFiles');
 
 /*
 Column on Response tables referencing mission_progress.id
@@ -30,13 +29,10 @@ Checksum is a SHA512 hash
   }
 }
 */
-const getTextPrediction = (URL) => {
-  //Checksum will do a hash on the URL to pass to the DS API
-  // eslint-disable-next-line no-unused-vars
-  const checksum = generateChecksum(URL);
+const getTextPrediction = (dsSubmit) => {
   //submission/text
   //submission/illustration
-  return dsClient.post('/ocr', { URL });
+  return dsClient.post('/submission/text', dsSubmit);
 };
 
 module.exports = { getTextPrediction };
