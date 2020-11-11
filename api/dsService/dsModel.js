@@ -36,7 +36,7 @@ const getTextPrediction = (URL) => {
   const checksum = generateChecksum(URL);
   //submission/text
   //submission/illustration
-  return dsClient.post('/submission/text', { URL });
+  return dsClient.post('/ocr', { URL });
 };
 
 module.exports = { getTextPrediction };
