@@ -177,7 +177,7 @@ router.post('/', authRequired, async (req, res) => {
         }
       });
     } catch (e) {
-      console.error(e);
+      console.log(e);
       res.status(500).json({ message: e.message });
     }
   } else {
