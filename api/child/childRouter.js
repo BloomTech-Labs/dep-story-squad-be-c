@@ -205,7 +205,7 @@ async function parseAndSaveSubmissions(images, child) {
     images.map(async (url) => {
       try {
         // return writing scores and round it to nearest integer
-        let result = await dsModel.getPrediction(url);
+        let result = await dsModel.getTextPrediction(url);
         // console.log(result.data);
         let submissionObject = {
           file_path: url,
@@ -294,7 +294,7 @@ router.post('/:id/mission/draw', checkToken, async function (req, res) {
       if (req.file === undefined) {
         return res.json({ message: 'file undefined' });
       } else {
-        let result = await dsModel.getPrediction(req.file.location);
+        let result = await dsModel.getTextPrediction(req.file.location);
         console.log(result.data);
         let submissionObject = {
           file_path: req.file.location,
