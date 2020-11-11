@@ -1,13 +1,23 @@
 const axios = require('axios');
 const dsConfig = require('../../config/dsConfig');
 const dsClient = axios.create(dsConfig);
+const generateChecksum = require('../middleware/uploadFiles');
 
 /*
+Column on Response tables referencing mission_progress.id
+
+Writing_response: keep track of page numbers
+
+
+For every response we have with submission id x, find pages with matching id.
+iterate pages into object where page number is key, and value is equal to a URL k/v pair, and a checksum which will just be a hashing of the url string.
+
+
 Example data of object needing to be passed to predictions.
 Checksum is a SHA512 hash
 {
-  "SubmissionID": 123564,
-  "StoryId": 154478,
+  "SubmissionID": 123564, <- Mission_Progress.id
+  "StoryId": 154478, <- Missions.id
   "Pages": {
     "1": {
       "URL": "https://test-image-bucket-14579.s3.amazonaws.com/bucketFolder/1600554345008-lg.png",
@@ -20,10 +30,13 @@ Checksum is a SHA512 hash
   }
 }
 */
-const getPrediction = (URL) => {
+const getTextPrediction = (URL) => {
+  //Checksum will do a hash on the URL to pass to the DS API
+  // eslint-disable-next-line no-unused-vars
+  const checksum = generateChecksum(URL);
   //submission/text
   //submission/illustration
   return dsClient.post('/ocr', { URL });
 };
 
-module.exports = { getPrediction };
+module.exports = { getTextPrediction };

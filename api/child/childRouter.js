@@ -205,7 +205,7 @@ async function parseAndSaveSubmissions(images, child) {
     images.map(async (url) => {
       try {
         // return writing scores and round it to nearest integer
-        let result = await dsModel.getPrediction(url);
+        let result = await dsModel.getTextPrediction(url);
         // console.log(result.data);
         let submissionObject = {
           file_path: url,
@@ -254,6 +254,21 @@ router.post('/:id/mission/write', checkToken, async function (req, res) {
           fileLocation = fileArray[i].location;
           images.push(fileLocation);
         }
+        //we get the scores and flags back
+        //and construct the submission objects to save to the DB
+        let submissions = [];
+        //NOTE: We already have urls here because of multer; we just need to generate checksums for them
+        images.map(async (url) => {
+          let result = await dsModel.getTextPrediction(url);
+          console.log(result.data);
+          let submissionObject = {
+            file_path: url,
+            score: result.data,
+            mission_id: child.current_mission,
+            child_id: child.id,
+          };
+          submissions.push(submissionObject);
+        });
         await parseAndSaveSubmissions(images, child);
 
         const mission = await Child.updateProgress(req.params.id, 'write');
@@ -279,7 +294,7 @@ router.post('/:id/mission/draw', checkToken, async function (req, res) {
       if (req.file === undefined) {
         return res.json({ message: 'file undefined' });
       } else {
-        let result = await dsModel.getPrediction(req.file.location);
+        let result = await dsModel.getTextPrediction(req.file.location);
         console.log(result.data);
         let submissionObject = {
           file_path: req.file.location,
