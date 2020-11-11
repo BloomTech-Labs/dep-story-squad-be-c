@@ -225,8 +225,9 @@ router.post('/:id/mission/write', checkToken, async function (req, res) {
         //we get the scores and flags back
         //and construct the submission objects to save to the DB
         let submissions = [];
+        //NOTE: We already have urls here because of multer; we just need to generate checksums for them
         images.map(async (url) => {
-          let result = await dsModel.getPrediction(url);
+          let result = await dsModel.getTextPrediction(url);
           console.log(result.data);
           let submissionObject = {
             file_path: url,
