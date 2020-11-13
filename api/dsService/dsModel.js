@@ -1,6 +1,6 @@
-const axios = require('axios');
+const { default: Axios } = require('axios');
 const dsConfig = require('../../config/dsConfig');
-const dsClient = axios.create(dsConfig);
+const dsClient = Axios.create(dsConfig);
 
 /*
 Column on Response tables referencing mission_progress.id

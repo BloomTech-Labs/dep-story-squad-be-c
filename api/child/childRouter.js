@@ -9,7 +9,7 @@ const multiUpload = upload.array('image', 5);
 const singleUpload = upload.single('image');
 const checkToken = require('../middleware/jwtRestricted');
 const generateChecksum = require('../middleware/uploadFiles');
-const getTextPrediction = require('../dsService/dsModel');
+const fs = require('fs');
 
 //token creator for our JWT
 function createToken(user) {
@@ -242,6 +242,7 @@ Once object is created, send to ds api
 //add each of those post objects to the db
 router.post('/:id/mission/write', checkToken, async function (req, res) {
   console.log('hi 1');
+  console.log(req);
   let child = await Child.findById(req.params.id);
   console.log('hi 2');
   //we run the images through this multer function
@@ -263,6 +264,7 @@ router.post('/:id/mission/write', checkToken, async function (req, res) {
       } else {
         console.log('hi 5');
         const fileArray = req.files;
+        console.log('multer:', fileArray);
         let fileLocation = '';
         const images = [];
         for (let i = 0; i < fileArray.length; i++) {
@@ -271,17 +273,19 @@ router.post('/:id/mission/write', checkToken, async function (req, res) {
         }
         //we get the scores and flags back
         const dsSubmit = {
-          missionProgressID: 1,
-          missionID: child.current_mission,
-          pages: {},
+          SubmissionID: 1,
+          StoryId: child.current_mission,
+          Pages: {},
         };
         images.map((result, i) => {
+          console.log('URL', result);
+          const s = fs.readFileSync(result);
           const updateInd = i + 1;
           const pageObj = {
-            url: result,
-            checksum: generateChecksum(result),
+            URL: result,
+            Checksum: generateChecksum(s),
           };
-          dsSubmit.pages[updateInd] = pageObj;
+          dsSubmit.Pages[updateInd] = pageObj;
         });
         //Response from dsSubmit:
         /*
@@ -300,8 +304,8 @@ router.post('/:id/mission/write', checkToken, async function (req, res) {
         let submissions = [];
         //NOTE: We already have urls here because of multer; we just need to generate checksums for them
         console.log(dsSubmit);
-        let result = await getTextPrediction(dsSubmit);
-        console.log(result);
+        let result = await dsModel.getTextPrediction(dsSubmit);
+        console.log(result.data);
         for (let i = 0; i < images.length; i++) {
           let submissionObject = {
             file_path: dsSubmit.pages[i].url,
