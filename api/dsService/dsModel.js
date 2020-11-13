@@ -32,7 +32,7 @@ Checksum is a SHA512 hash
 const getTextPrediction = (dsSubmit) => {
   //submission/text
   //submission/illustration
-  return dsClient.post('/submission/text', dsSubmit);
+  return dsClient.post('submission/text', dsSubmit);
 };
 
 module.exports = { getTextPrediction };

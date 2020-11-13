@@ -9,6 +9,7 @@ const multiUpload = upload.array('image', 5);
 const singleUpload = upload.single('image');
 const checkToken = require('../middleware/jwtRestricted');
 const generateChecksum = require('../middleware/uploadFiles');
+const getTextPrediction = require('../dsService/dsModel');
 
 //token creator for our JWT
 function createToken(user) {
@@ -206,7 +207,7 @@ async function parseAndSaveSubmissions(images, child) {
     images.map(async (url) => {
       try {
         // return writing scores and round it to nearest integer
-        let result = await dsModel.getTextPrediction(url);
+        // let result = await dsModel.getTextPrediction(url);
         // console.log(result.data);
         let submissionObject = {
           file_path: url,
@@ -240,20 +241,27 @@ Once object is created, send to ds api
 //add those scores and flags to the urls to make each post object
 //add each of those post objects to the db
 router.post('/:id/mission/write', checkToken, async function (req, res) {
+  console.log('hi 1');
   let child = await Child.findById(req.params.id);
+  console.log('hi 2');
   //we run the images through this multer function
   //we send our files to an AWS bucket
   //we get back an array of urls for the uploaded files
   multiUpload(req, res, async function (err) {
+    console.log('hi 3');
     if (err) {
+      console.log('hi 4');
+      console.log(err.message);
       return res.status(500).json({
         status: 'fail',
         message: 'Error: No File Selected',
       });
     } else {
       if (req.files[0] === undefined) {
+        console.log('hi 6');
         return res.json({ message: 'file undefined' });
       } else {
+        console.log('hi 5');
         const fileArray = req.files;
         let fileLocation = '';
         const images = [];
@@ -291,7 +299,8 @@ router.post('/:id/mission/write', checkToken, async function (req, res) {
         //and construct the submission objects to save to the DB
         let submissions = [];
         //NOTE: We already have urls here because of multer; we just need to generate checksums for them
-        let result = await dsModel.getTextPrediction(dsSubmit);
+        console.log(dsSubmit);
+        let result = await getTextPrediction(dsSubmit);
         console.log(result);
         for (let i = 0; i < images.length; i++) {
           let submissionObject = {

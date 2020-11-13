@@ -170,6 +170,8 @@ describe('Child router endpoints', () => {
         .post('/child/1/mission/write')
         .attach('image', '__tests__/surprised.jpg')
         .attach('image', '__tests__/surprised.jpg');
+
+      console.log('HEY:', res);
       expect(res.status).toBe(200);
     });
   });

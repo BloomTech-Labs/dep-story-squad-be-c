@@ -65,7 +65,7 @@ router.get('/ocr/:URL', authRequired, function (req, res) {
   const URL = String(req.params.URL);
 
   dsModel
-    .getPrediction(URL)
+    .getTextPrediction(URL)
     .then((response) => {
       res.status(200).json(response.data);
     })
