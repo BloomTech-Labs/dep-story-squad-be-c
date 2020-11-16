@@ -4,12 +4,11 @@ const Child = require('./childModel');
 const dsModel = require('../dsService/dsModel.js');
 const router = express.Router();
 const jwt = require('jsonwebtoken');
-const upload = require('../middleware/multer');
+const { upload } = require('../middleware/multer');
 const multiUpload = upload.array('image', 5);
 const singleUpload = upload.single('image');
 const checkToken = require('../middleware/jwtRestricted');
-const generateChecksum = require('../middleware/uploadFiles');
-const fs = require('fs');
+const fileUploadHandler = require('../middleware/uploadFiles');
 
 //token creator for our JWT
 function createToken(user) {
@@ -202,7 +201,7 @@ router.put('/:id/mission/read', checkToken, (req, res) => {
  * @param child
  * @returns {Promise<any[]>}
  */
-async function parseAndSaveSubmissions(images, child) {
+async function parseAndSaveSubmissions(images, child, dsScores) {
   return Promise.all(
     images.map(async (url) => {
       try {
@@ -211,7 +210,8 @@ async function parseAndSaveSubmissions(images, child) {
         // console.log(result.data);
         let submissionObject = {
           file_path: url,
-          score: Math.round(result.data),
+          score: Math.round(dsScores.data.Complexity),
+          flagged: dsScores.data.IsFlagged,
           mission_id: child.current_mission,
           child_id: child.id,
         };
@@ -240,128 +240,94 @@ Once object is created, send to ds api
 //send each of those url's to the ds endpoint to get scores and flags back
 //add those scores and flags to the urls to make each post object
 //add each of those post objects to the db
-router.post('/:id/mission/write', checkToken, async function (req, res) {
-  console.log('hi 1');
-  console.log(req);
-  let child = await Child.findById(req.params.id);
-  console.log('hi 2');
-  //we run the images through this multer function
-  //we send our files to an AWS bucket
-  //we get back an array of urls for the uploaded files
-  multiUpload(req, res, async function (err) {
-    console.log('hi 3');
-    if (err) {
-      console.log('hi 4');
-      console.log(err.message);
-      return res.status(500).json({
-        status: 'fail',
-        message: 'Error: No File Selected',
-      });
-    } else {
-      if (req.files[0] === undefined) {
-        console.log('hi 6');
-        return res.json({ message: 'file undefined' });
-      } else {
-        console.log('hi 5');
-        const fileArray = req.files;
-        console.log('multer:', fileArray);
-        let fileLocation = '';
-        const images = [];
-        for (let i = 0; i < fileArray.length; i++) {
-          fileLocation = fileArray[i].location;
-          images.push(fileLocation);
-        }
-        //we get the scores and flags back
-        const dsSubmit = {
-          SubmissionID: 1,
-          StoryId: child.current_mission,
-          Pages: {},
-        };
-        images.map((result, i) => {
-          console.log('URL', result);
-          const s = fs.readFileSync(result);
-          const updateInd = i + 1;
-          const pageObj = {
-            URL: result,
-            Checksum: generateChecksum(s),
-          };
-          dsSubmit.Pages[updateInd] = pageObj;
-        });
-        //Response from dsSubmit:
-        /*
-        {
-          missionProgressID: undefined,
-          missionID: 1,
-          pages: {
-            '1': {
-              url: 'https://storysquad-teamc-bucket.s3.amazonaws.com/user-content/1605118951973JB_SPICY_RAMEN_4K.jpg',  
-              checksum: 'c0d68b9535e8a5d06c6d45ff48bd89eada2129a139666ea6028d66267ff5b2d041688ce8a8a258faf75e19e3f93846718d04720b7e49389b0fabad8727f896ad'
-            }
-          }
-        }
-        */
-        //and construct the submission objects to save to the DB
-        let submissions = [];
-        //NOTE: We already have urls here because of multer; we just need to generate checksums for them
-        console.log(dsSubmit);
-        let result = await dsModel.getTextPrediction(dsSubmit);
-        console.log(result.data);
-        for (let i = 0; i < images.length; i++) {
-          let submissionObject = {
-            file_path: dsSubmit.pages[i].url,
-            // score: result.data,
-            // flagged: result
-            mission_id: child.current_mission,
-            child_id: child.id,
-          };
-          submissions.push(submissionObject);
-        }
+router.post(
+  '/:id/mission/write',
+  checkToken,
+  fileUploadHandler,
+  async function (req, res) {
+    console.log('hi 1');
+    // console.log(req);
+    let child = await Child.findById(req.params.id);
+    console.log('hi 2');
+    // we run the images through this multer function
+    // we send our files to an AWS bucket
+    // we get back an array of urls for the uploaded files
 
-        await parseAndSaveSubmissions(images, child);
+    console.log(req.body);
 
-        const mission = await Child.updateProgress(req.params.id, 'write');
-        res.status(200).json({
-          message: 'we got your submission!',
-          progress: mission[0],
-        });
-      }
+    let fileArray = req.body;
+
+    const images = [];
+    for (let i = 0; i < Object.keys(fileArray).length; i++) {
+      let fileLocation = fileArray[i].Location;
+      images.push(fileLocation);
     }
-  });
-});
+    //we get the scores and flags back
+    const dsSubmit = {
+      SubmissionID: 1,
+      StoryId: child.current_mission,
+      Pages: {},
+    };
+    images.map((result, i) => {
+      console.log('URL', result);
+      const updateInd = i + 1;
+      const pageObj = {
+        URL: result,
+        Checksum: fileArray[i].Checksum,
+      };
+      dsSubmit.Pages[updateInd] = pageObj;
+    });
+
+    console.log('dsSubmit:', dsSubmit);
+
+    let dsScores = await dsModel.getTextPrediction(dsSubmit);
+
+    console.log(dsScores);
+
+    await parseAndSaveSubmissions(images, child, dsScores);
+
+    const mission = await Child.updateProgress(req.params.id, 'write');
+
+    res.status(200).json({
+      message: 'we got your submission!',
+      progress: mission[0],
+    });
+  }
+);
 
 router.post('/:id/mission/draw', checkToken, async function (req, res) {
   let child = await Child.findById(req.params.id);
 
-  singleUpload(req, res, async function (err) {
-    if (err) {
-      return res.status(500).json({
-        status: 'fail',
-        message: 'Error: No File Selected',
-      });
-    } else {
-      if (req.file === undefined) {
-        return res.json({ message: 'file undefined' });
-      } else {
-        let result = await dsModel.getTextPrediction(req.file.location);
-        console.log(result.data);
-        let submissionObject = {
-          file_path: req.file.location,
-          score: Math.round(result.data),
-          mission_id: child.current_mission,
-          child_id: child.id,
-        };
-        try {
-          await Child.addDrawing(submissionObject);
-        } catch (err) {
-          console.log('error', err);
-        }
-        const mission = await Child.updateProgress(req.params.id, 'draw');
-        res
-          .status(200)
-          .json({ message: 'we got your submission!', progress: mission[0] });
-      }
-    }
-  });
+  // singleUpload(req, res, async function (err) {
+  //   if (err) {
+  //     return res.status(500).json({
+  //       status: 'fail',
+  //       message: 'Error: No File Selected',
+  //     });
+  //   } else {
+  //     if (req.file === undefined) {
+  //       return res.json({ message: 'file undefined' });
+  //     } else {
+  //       let result = await dsModel.getTextPrediction(req.file.location);
+  //       console.log(result.data);
+  //       let submissionObject = {
+  //         file_path: req.file.location,
+  //         score: Math.round(result.data),
+  //         mission_id: child.current_mission,
+  //         child_id: child.id,
+  //       };
+  //       try {
+  //         await Child.addDrawing(submissionObject);
+  //       } catch (err) {
+  //         console.log('error', err);
+  //       }
+  //       const mission = await Child.updateProgress(req.params.id, 'draw');
+  //       res
+  //         .status(200)
+  //         .json({ message: 'we got your submission!', progress: mission[0] });
+  //     }
+  //   }
+  // });
 });
 
 //get past submissions

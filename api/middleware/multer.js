@@ -10,6 +10,17 @@ aws.config.update({
 
 const s3 = new aws.S3();
 
+const uploader = (buffer, name, type) => {
+  const params = {
+    ACL: 'public-read',
+    Body: buffer,
+    Bucket: process.env.S3_BUCKET,
+    ContentType: type.mime,
+    Key: `${name}.${type.ext}`,
+  };
+  return s3.upload(params).promise();
+};
+
 const upload = multer({
   storage: multerS3({
     s3: s3,
@@ -25,4 +36,4 @@ const upload = multer({
   }),
 });
 
-module.exports = upload;
+module.exports = { upload, uploader };

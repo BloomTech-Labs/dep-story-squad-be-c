@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const upload = require('../middleware/multer');
+const { upload } = require('../middleware/multer');
 const singleUpload = upload.single('image');
 const multiUpload = upload.array('images', 5);
 
