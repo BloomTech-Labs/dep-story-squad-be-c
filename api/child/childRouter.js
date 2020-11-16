@@ -4,10 +4,8 @@ const Child = require('./childModel');
 const dsModel = require('../dsService/dsModel.js');
 const router = express.Router();
 const jwt = require('jsonwebtoken');
-const upload = require('../middleware/multer');
-const multiUpload = upload.array('image', 5);
-const singleUpload = upload.single('image');
 const checkToken = require('../middleware/jwtRestricted');
+const fileUploadHandler = require('../middleware/uploadFiles');
 
 //token creator for our JWT
 function createToken(user) {
@@ -200,16 +198,16 @@ router.put('/:id/mission/read', checkToken, (req, res) => {
  * @param child
  * @returns {Promise<any[]>}
  */
-async function parseAndSaveSubmissions(images, child) {
+async function parseAndSaveSubmissions(images, child, dsScores) {
   return Promise.all(
     images.map(async (url) => {
       try {
         // return writing scores and round it to nearest integer
-        let result = await dsModel.getTextPrediction(url);
-        // console.log(result.data);
+
         let submissionObject = {
           file_path: url,
-          score: Math.round(result.data),
+          score: Math.round(dsScores.data.Complexity),
+          flagged: dsScores.data.IsFlagged,
           mission_id: child.current_mission,
           child_id: child.id,
         };
@@ -227,93 +225,130 @@ async function parseAndSaveSubmissions(images, child) {
   );
 }
 
+/*
+Front end submits mission_progress.id with images.
+
+Once object is created, send to ds api
+*/
+
 //post writting submission
 //use the multer function to send to the aws bucket and get the url's back
 //send each of those url's to the ds endpoint to get scores and flags back
 //add those scores and flags to the urls to make each post object
 //add each of those post objects to the db
-router.post('/:id/mission/write', checkToken, async function (req, res) {
-  let child = await Child.findById(req.params.id);
-  //we run the images through this multer function
-  //we send our files to an AWS bucket
-  //we get back an array of urls for the uploaded files
-  multiUpload(req, res, async function (err) {
-    if (err) {
-      return res.status(500).json({
-        status: 'fail',
-        message: 'Error: No File Selected',
-      });
-    } else {
-      if (req.files[0] === undefined) {
-        return res.json({ message: 'file undefined' });
-      } else {
-        const fileArray = req.files;
-        let fileLocation = '';
-        const images = [];
-        for (let i = 0; i < fileArray.length; i++) {
-          fileLocation = fileArray[i].location;
-          images.push(fileLocation);
-        }
-        //we get the scores and flags back
-        //and construct the submission objects to save to the DB
-        let submissions = [];
-        //NOTE: We already have urls here because of multer; we just need to generate checksums for them
-        images.map(async (url) => {
-          let result = await dsModel.getTextPrediction(url);
-          console.log(result.data);
-          let submissionObject = {
-            file_path: url,
-            score: result.data,
-            mission_id: child.current_mission,
-            child_id: child.id,
-          };
-          submissions.push(submissionObject);
-        });
-        await parseAndSaveSubmissions(images, child);
+router.post(
+  '/:id/mission/write',
+  checkToken,
+  fileUploadHandler,
+  async function (req, res) {
+    let child = await Child.findById(req.params.id);
 
-        const mission = await Child.updateProgress(req.params.id, 'write');
-        res.status(200).json({
-          message: 'we got your submission!',
-          progress: mission[0],
-        });
+    // pull s3 data created in fileUploadHandler from body
+    let fileArray = req.body;
+
+    try {
+      // create images array
+      const images = [];
+      // iterate over fileArray to pull out s3 urls and add to images array
+      for (let i = 0; i < Object.keys(fileArray).length; i++) {
+        let fileLocation = fileArray[i].Location;
+        images.push(fileLocation);
       }
-    }
-  });
-});
-
-router.post('/:id/mission/draw', checkToken, async function (req, res) {
-  let child = await Child.findById(req.params.id);
-
-  singleUpload(req, res, async function (err) {
-    if (err) {
-      return res.status(500).json({
-        status: 'fail',
-        message: 'Error: No File Selected',
-      });
-    } else {
-      if (req.file === undefined) {
-        return res.json({ message: 'file undefined' });
-      } else {
-        let result = await dsModel.getTextPrediction(req.file.location);
-        console.log(result.data);
-        let submissionObject = {
-          file_path: req.file.location,
-          score: Math.round(result.data),
-          mission_id: child.current_mission,
-          child_id: child.id,
+      // construct object structure for DS API
+      const dsSubmit = {
+        SubmissionID: 1,
+        StoryId: child.current_mission,
+        Pages: {},
+      };
+      // iterate over images array to create pageObj, which is then inserted into dsSubmit.Pages object
+      images.map((result, i) => {
+        const updateInd = i + 1;
+        const pageObj = {
+          URL: result,
+          Checksum: fileArray[i].Checksum,
         };
-        try {
-          await Child.addDrawing(submissionObject);
-        } catch (err) {
-          console.log('error', err);
-        }
-        const mission = await Child.updateProgress(req.params.id, 'draw');
-        res
-          .status(200)
-          .json({ message: 'we got your submission!', progress: mission[0] });
-      }
+        dsSubmit.Pages[updateInd] = pageObj;
+      });
+
+      // now that dsSubmit object is created, send to DS API for scoring and flagging review
+      let dsScores = await dsModel.getTextPrediction(dsSubmit);
+
+      // send data to saveSubmissions function for storage in database
+      await parseAndSaveSubmissions(images, child, dsScores);
+
+      // if we've made it this far, child has successfully submitted a writing sample so update their mission progress
+      const mission = await Child.updateProgress(req.params.id, 'write');
+
+      // send success message to client
+      res.status(200).json({
+        message: 'we got your submission!',
+        progress: mission[0],
+      });
+    } catch (err) {
+      // if caught here, the issue either in the dsSubmit object construction, the DS API itself, or the saving of data to the database
+      res.status(500).jdson({ message: 'File upload error' });
     }
-  });
+  }
+);
+
+router.post('/:id/mission/draw', checkToken, fileUploadHandler, async function (
+  req,
+  res
+) {
+  let child = await Child.findById(req.params.id);
+
+  // pull s3 data created in fileUploadHandler from body
+  let fileArray = req.body;
+
+  // create images array
+  const images = [];
+  // iterate over fileArray to pull out s3 urls and add to images array
+  for (let i = 0; i < Object.keys(fileArray).length; i++) {
+    let fileLocation = fileArray[i].Location;
+    images.push(fileLocation);
+  }
+  // construct object structure for DS API
+
+  if (images.length > 1) {
+    res.status(500).json({ message: 'Please only upload one drawing' });
+  } else {
+    const dsSubmit = {
+      SubmissionID: 1,
+    };
+    // iterate over images array to create pageObj, which is then inserted into dsSubmit.Pages object
+    images.map((result, i) => {
+      dsSubmit['URL'] = result;
+      dsSubmit['Checksum'] = fileArray[i].Checksum;
+    });
+
+    // now that dsSubmit object is created, send to DS API for scoring and flagging review
+    let dsScores = await dsModel.getDrawingPrediction(dsSubmit);
+
+    // create submission object for drawing
+
+    let submissionObject = {
+      file_path: images[0],
+      flagged: dsScores.data.IsFlagged,
+      mission_id: child.current_mission,
+      child_id: child.id,
+    };
+
+    // send drawing to database
+    await Child.addDrawing(submissionObject);
+
+    // if we've made it this far, child has successfully submitted a drawing sample so update their mission progress
+    const mission = await Child.updateProgress(req.params.id, 'draw');
+
+    // send success message to client
+    res.status(200).json({
+      message: 'we got your submission!',
+      progress: mission[0],
+    });
+  }
+  // } catch (err) {
+  //   // if caught here, the issue either in the dsSubmit object construction, the DS API itself, or the saving of data to the database
+  //   res.status(500).json({ message: 'File upload error' });
+  // }
 });
 
 //get past submissions

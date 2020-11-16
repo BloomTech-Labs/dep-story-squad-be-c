@@ -165,11 +165,15 @@ describe('Child router endpoints', () => {
     it('should allow multiple file uploads', async () => {
       Child.findById.mockResolvedValue(child);
       Child.addWriting.mockResolvedValue({});
-      dsModel.getTextPrediction.mockResolvedValue(-15.7);
+
+      let dsSubmit = { data: { IsFlagged: false, Complexity: 100 } };
+
+      dsModel.getTextPrediction.mockResolvedValue(dsSubmit);
       const res = await request(server)
         .post('/child/1/mission/write')
         .attach('image', '__tests__/surprised.jpg')
         .attach('image', '__tests__/surprised.jpg');
+
       expect(res.status).toBe(200);
     });
   });
@@ -177,8 +181,11 @@ describe('Child router endpoints', () => {
   describe('POST /child/:id/mission/draw', () => {
     it('should allow single file uploads', async () => {
       Child.findById.mockResolvedValue(child);
-      Child.addWriting.mockResolvedValue({});
-      dsModel.getTextPrediction.mockResolvedValue(-15.7);
+      Child.addDrawing.mockResolvedValue({});
+
+      let dsSubmit = { data: { IsFlagged: false } };
+
+      dsModel.getDrawingPrediction.mockResolvedValue(dsSubmit);
 
       const res = await request(server)
         .post('/child/1/mission/draw')
