@@ -4,9 +4,6 @@ const Child = require('./childModel');
 const dsModel = require('../dsService/dsModel.js');
 const router = express.Router();
 const jwt = require('jsonwebtoken');
-const { upload } = require('../middleware/multer');
-const multiUpload = upload.array('image', 5);
-const singleUpload = upload.single('image');
 const checkToken = require('../middleware/jwtRestricted');
 const fileUploadHandler = require('../middleware/uploadFiles');
 
