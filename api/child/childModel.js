@@ -1,3 +1,4 @@
+var cron = require('node-cron');
 const db = require('../../data/db-config');
 /**
  * A method to get all children from the database
@@ -152,6 +153,21 @@ const nextMission = async (child_id, mission_id) => {
     },
   };
 };
+
+// Scheduling the reset of weekly misison using node-cron
+const missionUpdate = cron.schedule(
+  '* * * 1-12 6',
+  () => {
+    console.log('Mission has been reset!');
+    nextMission();
+  },
+  {
+    schedule: true,
+    timezone: 'America/Denver',
+  }
+);
+
+missionUpdate.start();
 
 /**
  * A method to set the read, write, or draw fields to true in the childs mission progress
