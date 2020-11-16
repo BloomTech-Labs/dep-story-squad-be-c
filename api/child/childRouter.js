@@ -206,8 +206,7 @@ async function parseAndSaveSubmissions(images, child, dsScores) {
     images.map(async (url) => {
       try {
         // return writing scores and round it to nearest integer
-        // let result = await dsModel.getTextPrediction(url);
-        // console.log(result.data);
+
         let submissionObject = {
           file_path: url,
           score: Math.round(dsScores.data.Complexity),
@@ -245,7 +244,6 @@ router.post(
   checkToken,
   fileUploadHandler,
   async function (req, res) {
-    // console.log(req);
     let child = await Child.findById(req.params.id);
 
     // pull s3 data created in fileUploadHandler from body
@@ -267,7 +265,6 @@ router.post(
       };
       // iterate over images array to create pageObj, which is then inserted into dsSubmit.Pages object
       images.map((result, i) => {
-        console.log('URL', result);
         const updateInd = i + 1;
         const pageObj = {
           URL: result,
@@ -301,12 +298,10 @@ router.post('/:id/mission/draw', checkToken, fileUploadHandler, async function (
   req,
   res
 ) {
-  // console.log(req);
   let child = await Child.findById(req.params.id);
 
   // pull s3 data created in fileUploadHandler from body
   let fileArray = req.body;
-  console.log(fileArray);
 
   // create images array
   const images = [];
@@ -329,12 +324,8 @@ router.post('/:id/mission/draw', checkToken, fileUploadHandler, async function (
       dsSubmit['Checksum'] = fileArray[i].Checksum;
     });
 
-    console.log(dsSubmit);
-
     // now that dsSubmit object is created, send to DS API for scoring and flagging review
     let dsScores = await dsModel.getDrawingPrediction(dsSubmit);
-
-    console.log(dsScores);
 
     // create submission object for drawing
 

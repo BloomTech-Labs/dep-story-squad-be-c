@@ -5,17 +5,14 @@ const fs = require('fs');
 const { uploader } = require('../middleware/multer');
 
 const fileUploadHandler = async (req, res, next) => {
-  console.log(req.files);
   // Create a new instance of a multiparty form object
   const form = new multiparty.Form();
   // Parse the form data from the request body into multiparty
   form.parse(req, async (error, fields, files) => {
     // Iterate over the request body and parse all form data
     try {
-      console.log(files);
       // Get a list of all form fields that had file uploads
       const fileNames = Object.keys(files);
-      console.log('filesNames:', fileNames);
 
       // Initiate a hash table to store resolved file upload values
       const resolvedFiles = {};
@@ -28,8 +25,6 @@ const fileUploadHandler = async (req, res, next) => {
 
         // Read each file into a buffer
         const buffers = paths.map((path) => fs.readFileSync(path));
-        console.log('buffers:', buffers);
-        console.log('hi 1');
 
         buffers.forEach((s) => {
           if (!checksums[f]) {
@@ -39,13 +34,13 @@ const fileUploadHandler = async (req, res, next) => {
         });
 
         // Create a list of promises to find each file type and resolve them
-        console.log('hi 2');
+
         const typePromises = buffers.map((buffer) =>
           fileType.fromBuffer(buffer)
         );
-        console.log(typePromises);
+
         const types = await Promise.all(typePromises);
-        console.log('hi 2');
+
         // Generate unique names for each file
         const uploadFileNames = paths.map((path, i) => {
           const timestamp = Date.now().toString();
@@ -63,10 +58,6 @@ const fileUploadHandler = async (req, res, next) => {
           ...x,
           Checksum: checksums[f][i],
         }));
-
-        console.log('hi 2');
-
-        console.log(resolvedFiles['image']);
 
         req.body = {
           ...req.body,
