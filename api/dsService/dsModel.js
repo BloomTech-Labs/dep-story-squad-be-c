@@ -35,4 +35,10 @@ const getTextPrediction = (dsSubmit) => {
   return dsClient.post('submission/text', dsSubmit);
 };
 
-module.exports = { getTextPrediction };
+const getDrawingPrediction = (dsSubmit) => {
+  //submission/text
+  //submission/illustration
+  return dsClient.post('submission/illustration', dsSubmit);
+};
+
+module.exports = { getTextPrediction, getDrawingPrediction };
