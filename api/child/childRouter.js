@@ -59,6 +59,7 @@ router.post('/:id', authRequired, function (req, res) {
                     avatar_url: child.avatar_url,
                   },
                   mission_progress: {
+                    id: progress.id,
                     read: progress.read,
                     write: progress.write,
                     draw: progress.draw,
@@ -242,6 +243,9 @@ router.post(
   fileUploadHandler,
   async function (req, res) {
     let child = await Child.findById(req.params.id);
+    let mission_progress_id = req.query['mpi'];
+
+    console.log('QUERY', req.query);
 
     // pull s3 data created in fileUploadHandler from body
     let fileArray = req.body;
@@ -256,7 +260,7 @@ router.post(
       }
       // construct object structure for DS API
       const dsSubmit = {
-        SubmissionID: 1,
+        SubmissionID: mission_progress_id,
         StoryId: child.current_mission,
         Pages: {},
       };
@@ -286,7 +290,7 @@ router.post(
       });
     } catch (err) {
       // if caught here, the issue either in the dsSubmit object construction, the DS API itself, or the saving of data to the database
-      res.status(500).jdson({ message: 'File upload error' });
+      res.status(500).json({ message: 'File upload error' });
     }
   }
 );
@@ -296,6 +300,7 @@ router.post('/:id/mission/draw', checkToken, fileUploadHandler, async function (
   res
 ) {
   let child = await Child.findById(req.params.id);
+  let mission_progress_id = req.query['mpi'];
 
   // pull s3 data created in fileUploadHandler from body
   let fileArray = req.body;
@@ -313,7 +318,7 @@ router.post('/:id/mission/draw', checkToken, fileUploadHandler, async function (
     res.status(500).json({ message: 'Please only upload one drawing' });
   } else {
     const dsSubmit = {
-      SubmissionID: 1,
+      SubmissionID: mission_progress_id,
     };
     // iterate over images array to create pageObj, which is then inserted into dsSubmit.Pages object
     images.map((result, i) => {

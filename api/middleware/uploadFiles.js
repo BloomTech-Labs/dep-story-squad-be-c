@@ -63,6 +63,8 @@ const fileUploadHandler = async (req, res, next) => {
           ...req.body,
           ...resolvedFiles['image'],
         };
+
+        console.log('uploadFiles:', req.body);
       }
       next();
     } catch (err) {
