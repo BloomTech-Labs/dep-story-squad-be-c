@@ -79,6 +79,7 @@ router.post('/:id', authRequired, function (req, res) {
                           avatar_url: child.avatar_url,
                         },
                         mission_progress: {
+                          id: newProgress.id,
                           read: newProgress.read,
                           write: newProgress.write,
                           draw: newProgress.draw,

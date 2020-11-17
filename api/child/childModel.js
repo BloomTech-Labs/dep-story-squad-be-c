@@ -52,21 +52,25 @@ const getChildSubmissions = async (id) => {
  * @returns {Promise} promise that resolves to an object with mission info
  */
 const getCurrentMission = async (current_mission) => {
-  const reading = await db('Story')
-    .where({ mission_id: current_mission })
-    .first()
-    .select('file_path');
-  const mission = await db('Missions')
-    .where({ id: current_mission })
-    .returning('id', 'title', 'writing_prompt', 'drawing_prompt')
-    .first();
-  const missionObj = {
-    mission_id: mission.id,
-    read: reading.file_path,
-    write: mission.writing_prompt,
-    draw: mission.drawing_prompt,
-  };
-  return missionObj;
+  try {
+    const reading = await db('Story')
+      .where({ mission_id: current_mission })
+      .first()
+      .select('file_path');
+    const mission = await db('Missions')
+      .where({ id: current_mission })
+      .returning('id', 'title', 'writing_prompt', 'drawing_prompt')
+      .first();
+    const missionObj = {
+      mission_id: mission.id,
+      read: reading.file_path,
+      write: mission.writing_prompt,
+      draw: mission.drawing_prompt,
+    };
+    return missionObj;
+  } catch (error) {
+    // console.log('error', error);
+  }
 };
 
 /**
@@ -111,9 +115,13 @@ const getMissionProgress = async (id) => {
  * @returns {Promise} promise that resovles to a mission progress object
  */
 const createMissionProgress = async (id) => {
-  return db('Mission_Progress')
-    .insert({ child_id: id, read: false, write: false, draw: false })
-    .returning('*');
+  try {
+    return db('Mission_Progress')
+      .insert({ child_id: id, read: false, write: false, draw: false })
+      .returning('*');
+  } catch (error) {
+    // console.log('error', error);
+  }
 };
 
 // TODO implement this with a cron-job to allow weekly resets (search node-cron)
@@ -146,6 +154,7 @@ const nextMission = async (child_id, mission_id) => {
       current_mission: updatedChildObject.current_mission,
       avatar_url: updatedChildObject.avatar_url,
       mission_progress: {
+        id: updatedMissionProgress.id,
         read: updatedMissionProgress.read,
         write: updatedMissionProgress.write,
         draw: updatedMissionProgress.draw,
